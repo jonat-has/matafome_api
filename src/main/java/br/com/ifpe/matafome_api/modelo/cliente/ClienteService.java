@@ -2,10 +2,12 @@ package br.com.ifpe.matafome_api.modelo.cliente;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -30,7 +32,14 @@ public class ClienteService {
 
     public Cliente obterPorID(Long id) {
 
-        return repository.findById(id).get();
+        Optional<Cliente> consulta = repository.findById(id);
+  
+       if (consulta.isPresent()) {
+           return consulta.get();
+       } else {
+           throw new EntidadeNaoEncontradaException("Cliente", id);
+       }
+
     }
 
     @Transactional

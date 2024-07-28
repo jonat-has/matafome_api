@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Cliente extends EntidadeAuditavel {
 
-    @Column
+    @Column(nullable = false, length = 100)
     private String nome;
 
     @Column
@@ -35,7 +35,7 @@ public class Cliente extends EntidadeAuditavel {
     @Column
     private String senha;
 
-    @Column
+    @Column(unique = true)
     private String cpf;
 
 }
