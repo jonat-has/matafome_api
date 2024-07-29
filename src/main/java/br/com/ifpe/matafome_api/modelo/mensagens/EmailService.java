@@ -18,7 +18,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
-
+import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -58,6 +58,14 @@ public class EmailService {
 
         this.sendMailTemplate("bem_vindo_cliente.html", cliente.getEmail(), assuntoEmail, params);
     }
+
+    public void enviarEmailConfirmacaoCadastroEmpresa(Empresa empresa) {
+    String assuntoEmail = "Bem vindo ao nosso aplicativo";
+    Context params = new Context();
+    params.setVariable("empresa", empresa);
+    this.sendMailTemplate("bem_vindo_empresa.html", empresa.getEmail(), assuntoEmail, params);
+    }
+
 
     @Async
     private void sendMailTemplate(String template, String to, String subject, Context params) {
