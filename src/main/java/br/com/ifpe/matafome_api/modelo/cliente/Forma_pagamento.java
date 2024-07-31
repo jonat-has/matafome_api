@@ -1,10 +1,9 @@
-package br.com.ifpe.matafome_api.modelo.forma_pagamento;
+package br.com.ifpe.matafome_api.modelo.cliente;
 
 import org.hibernate.annotations.SQLRestriction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.annotations.SQLRestriction;
 
-import br.com.ifpe.matafome_api.modelo.forma_pagamento.Forma_pagamento;
 /*import br.com.ifpe.matafome_api.modelo.acesso.Usuario;*/
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;

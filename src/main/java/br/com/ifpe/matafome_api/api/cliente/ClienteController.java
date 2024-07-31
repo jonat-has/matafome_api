@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
+import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
@@ -87,7 +88,28 @@ public class ClienteController {
        return ResponseEntity.noContent().build();
    }
 
+   /*ENDPOINT DE FORMAS DE PAGAMENTO*/
+   
+   @PostMapping("/formasDePagamento/{clienteId}")
+   public ResponseEntity<Forma_pagamento> adicionarFormaPagamento(@PathVariable("clienteId") Long clienteId, @RequestBody @Valid Forma_pagamentoRequest request) {
 
+    Forma_pagamento formasDePagamento = clienteService.adicionarForma_pagamento(clienteId, request.build());
+       return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.CREATED);
+   }
+
+   @PutMapping("/formasDePagamento/{formaId}")
+   public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable("formaId") Long formaId, @RequestBody Forma_pagamentoRequest request) {
+
+    Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, request.build());
+       return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.OK);
+   }
+  
+   @DeleteMapping("/formasDePagamento/{formaId}")
+   public ResponseEntity<Void> removerFormaPagamento(@PathVariable("formaId") Long formaId) {
+
+       clienteService.removerForma_pagamento(formaId);
+       return ResponseEntity.noContent().build();
+   }
 
 
 }

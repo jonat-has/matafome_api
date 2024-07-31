@@ -25,6 +25,9 @@ public class ClienteService {
     @Autowired
     private Endereco_clienteRepository endereco_clienteRepository;
 
+    @Autowired
+    private Forma_pagamentoRepository forma_pagamentoRepository;
+
     /*Funções de cliente */
     @Transactional
     public Cliente save(Cliente cliente) {
@@ -128,17 +131,75 @@ public class ClienteService {
    }
 
    @Transactional
-public void removerEndereco_cliente(Long id) {
+    public void removerEndereco_cliente(Long id) {
 
-    Endereco_cliente endereco = endereco_clienteRepository.findById(id).get();
-    endereco.setHabilitado(Boolean.FALSE);
-    endereco_clienteRepository.save(endereco);
+        Endereco_cliente endereco = endereco_clienteRepository.findById(id).get();
+        endereco.setHabilitado(Boolean.FALSE);
+        endereco_clienteRepository.save(endereco);
 
-    Cliente cliente = this.obterPorID(endereco.getCliente().getId());
-    cliente.getEnderecos().remove(endereco);
-    cliente.setVersao(cliente.getVersao() + 1);
-    repository.save(cliente);
-}
+        Cliente cliente = this.obterPorID(endereco.getCliente().getId());
+        cliente.getEnderecos().remove(endereco);
+        cliente.setVersao(cliente.getVersao() + 1);
+        repository.save(cliente);
+    }
+
+    /*Funções de formas de pagamentos */
+    @Transactional
+    public Forma_pagamento adicionarForma_pagamento(Long clienteId, Forma_pagamento forma_pagamento) {
+ 
+        Cliente cliente = this.obterPorID(clienteId);
+       
+        //Primeiro salva o Forma_pagamento:
+ 
+        forma_pagamento.setCliente(cliente);
+        forma_pagamento.setHabilitado(Boolean.TRUE);
+        forma_pagamentoRepository.save(forma_pagamento);
+       
+        //Depois acrescenta o endereço criado ao cliente e atualiza o cliente:
+ 
+        List<Forma_pagamento> listaForma_pagamento = cliente.getForma_pagamento();
+       
+        if (listaForma_pagamento == null) {
+            listaForma_pagamento = new ArrayList<Forma_pagamento>();
+        }
+       
+        listaForma_pagamento.add(forma_pagamento);
+        cliente.setForma_pagamento(listaForma_pagamento);
+        cliente.setVersao(cliente.getVersao() + 1);
+        repository.save(cliente);
+       
+        return forma_pagamento;
+    }
+
+    @Transactional
+    public Forma_pagamento atualizarForma_pagamento(Long id, Forma_pagamento forma_pagamentoAlterado) {
+
+        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id).get();
+        forma_pagamento.setTipo(forma_pagamentoAlterado.getTipo());
+        forma_pagamento.setNumero_cartao(forma_pagamentoAlterado.getNumero_cartao());
+        forma_pagamento.setData_validade(forma_pagamentoAlterado.getData_validade());
+        forma_pagamento.setNome_titular(forma_pagamentoAlterado.getNome_titular());
+        forma_pagamento.setCvv(forma_pagamentoAlterado.getCvv());
+        forma_pagamento.setEndereco_cobranca(forma_pagamentoAlterado.getEndereco_cobranca());
+        forma_pagamento.setCidade_cobranca(forma_pagamentoAlterado.getCidade_cobranca());
+        forma_pagamento.setEstado_cobranca(forma_pagamentoAlterado.getEstado_cobranca());
+        forma_pagamento.setCep_cobranca(forma_pagamentoAlterado.getCep_cobranca());
+
+        return forma_pagamentoRepository.save(forma_pagamento);
+    }
+
+    @Transactional
+    public void removerForma_pagamento(Long id) {
+
+        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id).get();
+        forma_pagamento.setHabilitado(Boolean.FALSE);
+        forma_pagamentoRepository.save(forma_pagamento);
+
+        Cliente cliente = this.obterPorID(forma_pagamento.getCliente().getId());
+        cliente.getForma_pagamento().remove(forma_pagamento);
+        cliente.setVersao(cliente.getVersao() + 1);
+        repository.save(cliente);
+    }
 
 
 }
