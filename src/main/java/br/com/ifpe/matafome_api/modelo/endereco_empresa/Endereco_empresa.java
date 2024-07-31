@@ -1,4 +1,4 @@
-package br.com.ifpe.matafome_api.modelo.enderecoEmpresa;
+package br.com.ifpe.matafome_api.modelo.endereco_empresa;
 
 import org.hibernate.annotations.SQLRestriction;
 
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "EnderecoEmpresa")
+@Table(name = "endereco_empresa")
 @SQLRestriction("habilitado = true")
 
 @Builder
@@ -21,8 +21,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class EnderecoEmpresa extends EntidadeAuditavel {
+public class Endereco_empresa extends EntidadeAuditavel {
 
     @Column
     private String rua;

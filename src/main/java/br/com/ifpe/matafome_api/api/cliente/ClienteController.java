@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
+import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
@@ -25,9 +26,11 @@ import jakarta.validation.Valid;
 @CrossOrigin
 public class ClienteController {
 
+
     @Autowired
     private ClienteService clienteService;
 
+    /*ENDPOINT DE CLIENTE */
     @Operation(
        summary = "Serviço responsável por salvar um cliente no sistema.",
        description = "Exemplo de descrição de um endpoint responsável por inserir um cliente no sistema."
@@ -61,6 +64,29 @@ public class ClienteController {
        clienteService.delete(id);
        return ResponseEntity.ok().build();
    }
+
+   /*ENDPOINT DE ENDEREÇOS DE CLIENTE */
+   @PostMapping("/endereco/{clienteId}")
+   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable("clienteId") Long clienteId, @RequestBody @Valid Endereco_clienteRequest request) {
+
+       Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, request.build());
+       return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.CREATED);
+   }
+
+   @PutMapping("/endereco/{enderecoId}")
+   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable("enderecoId") Long enderecoId, @RequestBody Endereco_clienteRequest request) {
+
+       Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, request.build());
+       return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.OK);
+   }
+  
+   @DeleteMapping("/endereco/{enderecoId}")
+   public ResponseEntity<Void> removerEndereco_cliente(@PathVariable("enderecoId") Long enderecoId) {
+
+       clienteService.removerEndereco_cliente(enderecoId);
+       return ResponseEntity.noContent().build();
+   }
+
 
 
 

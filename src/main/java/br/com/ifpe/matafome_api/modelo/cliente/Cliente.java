@@ -1,11 +1,16 @@
 package br.com.ifpe.matafome_api.modelo.cliente;
 
+import java.util.List;
+
 import org.hibernate.annotations.SQLRestriction;
 
+import br.com.ifpe.matafome_api.modelo.forma_pagamento.Forma_pagamento;
 /*import br.com.ifpe.matafome_api.modelo.acesso.Usuario;*/
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 /*import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;*/
 import jakarta.persistence.Table;
@@ -44,5 +49,11 @@ public class Cliente extends EntidadeAuditavel {
 
     @Column(unique = true)
     private String cpf;
+
+    @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Endereco_cliente> enderecos;
+
+    @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Forma_pagamento> forma_pagamento;
 
 }

@@ -1,4 +1,4 @@
-package br.com.ifpe.matafome_api.modelo.enderecoEmpresa;
+package br.com.ifpe.matafome_api.modelo.endereco_empresa;
 
 import java.time.LocalDate;
 
@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 @Service
-public class EnderecoEmpresaService {
+public class Endereco_empresaService {
 
    @Autowired
-   private EnderecoEmpresaRepository repository;
+   private Endereco_empresaRepository repository;
 
    @Transactional
-   public EnderecoEmpresa save(EnderecoEmpresa enderecoEmpresa) {
+   public Endereco_empresa save(Endereco_empresa enderecoEmpresa) {
 
       enderecoEmpresa.setHabilitado(Boolean.TRUE);
       enderecoEmpresa.setVersao(1L);

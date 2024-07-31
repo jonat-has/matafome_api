@@ -26,4 +26,5 @@ public class Categoria extends EntidadeAuditavel {
 
     @Column
     private String descricao;
+    
 }
