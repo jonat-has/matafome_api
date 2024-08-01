@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.transaction.Transactional;
@@ -23,14 +24,20 @@ public class ClienteService {
     private EmailService emailService;
 
     @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
     private Endereco_clienteRepository endereco_clienteRepository;
 
     @Autowired
     private Forma_pagamentoRepository forma_pagamentoRepository;
 
+
     /*Funções de cliente */
     @Transactional
     public Cliente save(Cliente cliente) {
+
+        usuarioService.save(cliente.getUsuario());
 
         cliente.setHabilitado(Boolean.TRUE);
         cliente.setVersao(1L);
@@ -65,11 +72,8 @@ public class ClienteService {
 
         Cliente cliente = repository.findById(id).get();
         cliente.setNome(clienteAlterado.getNome());
-        cliente.setEmail(clienteAlterado.getEmail());
         cliente.setCpf(clienteAlterado.getCpf());
         cliente.setFoneCelular(clienteAlterado.getFoneCelular());
-        cliente.setSenha(clienteAlterado.getSenha());
-
         cliente.setVersao(cliente.getVersao() + 1);
         repository.save(cliente);
     }

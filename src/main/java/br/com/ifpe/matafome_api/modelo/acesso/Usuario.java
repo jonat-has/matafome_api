@@ -1,4 +1,4 @@
-/*package br.com.ifpe.matafome_api.modelo.acesso;
+package br.com.ifpe.matafome_api.modelo.acesso;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,11 +36,12 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
 
    @JsonIgnore
    @Column(nullable = false)
-   private String password;
-
-   @JsonIgnore
-   @Column(nullable = false)
    private String username;
+
+
+    @JsonIgnore
+    @Column(nullable = false)
+    private String password;
 
    @JsonIgnore
    @ElementCollection(fetch = FetchType.EAGER)
@@ -57,6 +58,7 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
         return username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -81,4 +83,3 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
         return true;
     }
 }
-*/
