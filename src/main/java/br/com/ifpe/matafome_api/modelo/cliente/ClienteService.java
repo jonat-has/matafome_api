@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
@@ -35,13 +36,14 @@ public class ClienteService {
 
     /*Funções de cliente */
     @Transactional
-    public Cliente save(Cliente cliente) {
+    public Cliente save(Cliente cliente, Usuario usuarioLogado) {
 
         usuarioService.save(cliente.getUsuario());
 
         cliente.setHabilitado(Boolean.TRUE);
         cliente.setVersao(1L);
         cliente.setDataCriacao(LocalDate.now());
+        cliente.setCriadoPor(usuarioLogado);
         Cliente clienteSalvo = repository.save(cliente);
 
         emailService.enviarEmailConfirmacaoCadastroCliente(clienteSalvo);
@@ -68,13 +70,16 @@ public class ClienteService {
     }
 
     @Transactional
-    public void update(Long id, Cliente clienteAlterado) {
+    public void update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
 
         Cliente cliente = repository.findById(id).get();
         cliente.setNome(clienteAlterado.getNome());
         cliente.setCpf(clienteAlterado.getCpf());
         cliente.setFoneCelular(clienteAlterado.getFoneCelular());
         cliente.setVersao(cliente.getVersao() + 1);
+        cliente.setDataUltimaModificacao(LocalDate.now());
+        cliente.setUltimaModificacaoPor(usuarioLogado);
+    
         repository.save(cliente);
     }
 

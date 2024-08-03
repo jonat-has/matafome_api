@@ -1,4 +1,4 @@
-package br.com.ifpe.matafome_api.modelo.endereco_empresa;
+package br.com.ifpe.matafome_api.modelo.empresa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

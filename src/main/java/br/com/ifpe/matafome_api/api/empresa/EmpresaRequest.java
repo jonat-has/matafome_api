@@ -2,8 +2,9 @@ package br.com.ifpe.matafome_api.api.empresa;
 
 import java.time.LocalTime;
 
-import org.hibernate.validator.constraints.Length;
 
+
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,28 +19,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmpresaRequest {
+
+    @NotNull(message = "O Email é de preenchimento obrigatório")
+    @NotBlank(message = "O Email é de preenchimento obrigatório")
+    @Email
+    private String email;
+
+    @NotNull(message = "A Senha é de preenchimento obrigatório")
+    @NotBlank(message = "A Senha é de preenchimento obrigatório")
+    private String password;
+
+    private String perfil;
    
-   @NotNull(message = "A razão social é de preenchimento obrigatório")
-   @NotBlank(message = "A razão social e preenchimento obrigatório")
-   @Length(max = 100, message = "A razão social deverá ter no máximo {max} caracteres")
+
    private String razao_social;
 
-   @Length(max = 100, message = "A razão social deverá ter no máximo {max} caracteres")
+
    private String nome_fantasia;
    
-   @NotNull(message = "O CNPJ é de preenchimento obrigatório")
-   @NotBlank(message = "O CNPJ é de preenchimento obrigatório")
+  
    private String cnpj;
-
-   @NotNull(message = "O Email é de preenchimento obrigatório")
-   @NotBlank(message = "O Email é de preenchimento obrigatório")
-   @Email
-   private String email;
-
-   @NotNull(message = "A Senha é de preenchimento obrigatório")
-   @NotBlank(message = "A Senha é de preenchimento obrigatório")
-   private String senha;
-
    
    private String horario;
 
@@ -55,20 +54,28 @@ public class EmpresaRequest {
    
    private Double taxa_frete;
 
-   @Length(min = 8, max = 20, message = "O campo telefone tem que ter entre {min} e {max} caracteres")
+ 
    private String telefone;
 
    
    private String categoria;
 
+      public Usuario buildUsuario() {
+
+	return Usuario.builder()
+		.username(email)
+		.password(password)
+		.build();
+	}
+
+
    public Empresa build() {
 
        return Empresa.builder()
+           .usuario(buildUsuario())
            .razao_social(razao_social)
            .nome_fantasia(nome_fantasia)
            .cnpj(cnpj)
-           .email(email)
-           .senha(senha)
            .horario(horario)
            .img_capa(img_capa)
            .tempo_entrega(tempo_entrega)

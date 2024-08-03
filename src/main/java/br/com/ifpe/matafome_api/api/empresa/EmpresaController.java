@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
+import br.com.ifpe.matafome_api.modelo.empresa.Endereco_empresa;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
@@ -25,9 +27,11 @@ import jakarta.validation.Valid;
 @CrossOrigin
 public class EmpresaController {
 
+
     @Autowired
     private EmpresaService empresaService;
 
+    /*End point de Empresa */
     @Operation(
        summary = "Serviço responsável por salvar uma empresa no sistema.",
        description = "Exemplo de descrição de um endpoint responsável por inserir uma empresa no sistema."
@@ -35,8 +39,23 @@ public class EmpresaController {
     @PostMapping
     public ResponseEntity<Empresa> save(@RequestBody @Valid EmpresaRequest request) {
 
-        Empresa empresa = empresaService.save(request.build());
-        return new ResponseEntity<Empresa>(empresa, HttpStatus.CREATED);
+        Empresa empresa = request.build();
+
+        if (request.getPerfil() != null && !"".equals(request.getPerfil())) {
+
+			if (request.getPerfil().equals("EMPRESA_USER")) {
+
+				empresa.getUsuario().getRoles().add(Usuario.ROLE_EMPRESA_USER);
+
+			} else if (request.getPerfil().equals("EMPRESA_ADMIN")) {
+
+				empresa.getUsuario().getRoles().add(Usuario.ROLE_EMPRESA_ADMIN);
+			}
+		}
+
+
+        Empresa empresaCriada = empresaService.save(empresa);
+        return new ResponseEntity<Empresa>(empresaCriada, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -62,6 +81,28 @@ public class EmpresaController {
        return ResponseEntity.ok().build();
    }
 
+   /*End point de Endereço de empresa */
+
+   @PostMapping("/endereco/{empresaId}")
+   public ResponseEntity<Endereco_empresa> adicionarEndereco_empresa(@PathVariable("empresaId") Long empresaId, @RequestBody @Valid Endereco_empresaRequest request) {
+
+       Endereco_empresa endereco = empresaService.adicionarEndereco_empresa(empresaId, request.build());
+       return new ResponseEntity<Endereco_empresa>(endereco, HttpStatus.CREATED);
+   }
+
+   @PutMapping("/endereco/{enderecoId}")
+   public ResponseEntity<Endereco_empresa> atualizarEndereco_empresa(@PathVariable("enderecoId") Long enderecoId, @RequestBody Endereco_empresaRequest request) {
+
+       Endereco_empresa endereco = empresaService.atualizarEndereco_empresa(enderecoId, request.build());
+       return new ResponseEntity<Endereco_empresa>(endereco, HttpStatus.OK);
+   }
+  
+   @DeleteMapping("/endereco/{enderecoId}")
+   public ResponseEntity<Void> removerEndereco_empresa(@PathVariable("enderecoId") Long enderecoId) {
+
+       empresaService.removerEndereco_empresa(enderecoId);
+       return ResponseEntity.noContent().build();
+   }
 
 
 }

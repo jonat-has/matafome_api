@@ -14,7 +14,7 @@ import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtService;
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api/auth")
 @CrossOrigin
 public class AuthenticationController {
 

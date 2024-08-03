@@ -14,6 +14,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtAuthenticationFilter;
 
 
@@ -39,7 +40,16 @@ public class SecurityConfiguration {
                 .disable())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth").permitAll()
+
+                        //Configuração de autorizações de acesso para Produto
+	 	
+ 	                    .requestMatchers(HttpMethod.POST, "/api/produto").hasAnyAuthority(Usuario.ROLE_EMPRESA_ADMIN, Usuario.ROLE_EMPRESA_USER) //Cadastro de produto
+                        .requestMatchers(HttpMethod.PUT, "/api/produto/*").hasAnyAuthority(Usuario.ROLE_EMPRESA_ADMIN, Usuario.ROLE_EMPRESA_USER) //Alteração de produto
+                        .requestMatchers(HttpMethod.DELETE, "/api/produto/*").hasAnyAuthority(Usuario.ROLE_EMPRESA_ADMIN) //Exclusão de produto
+                        .requestMatchers(HttpMethod.GET, "/api/produto/").hasAnyAuthority(Usuario.ROLE_CLIENTE, Usuario.ROLE_EMPRESA_ADMIN, Usuario.ROLE_EMPRESA_USER) //Consulta de produto
+
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(management -> management

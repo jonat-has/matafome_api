@@ -1,7 +1,9 @@
 package br.com.ifpe.matafome_api.modelo.empresa;
 
 import java.time.LocalTime;
+import java.util.List;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +12,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
 
 
@@ -27,6 +36,9 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 public class Empresa extends EntidadeAuditavel  {
   
+      @ManyToOne
+      @JoinColumn(nullable = false)
+      private Usuario usuario;
 
       @Column
       private String razao_social;
@@ -36,12 +48,6 @@ public class Empresa extends EntidadeAuditavel  {
 
       @Column
       private String cnpj;
-
-      @Column
-      private String email;
-
-      @Column
-      private String senha;
 
       @Column
       private String horario;
@@ -63,4 +69,9 @@ public class Empresa extends EntidadeAuditavel  {
 
       @Column
       private String categoria;
+
+      @OneToMany(mappedBy = "empresa", orphanRemoval = true, fetch = FetchType.EAGER)
+      @Fetch(FetchMode.SUBSELECT)
+      private List<Endereco_empresa> enderecos;
+
 }

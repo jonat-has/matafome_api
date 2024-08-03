@@ -63,7 +63,7 @@ public class EmailService {
     String assuntoEmail = "Bem vindo ao nosso aplicativo";
     Context params = new Context();
     params.setVariable("empresa", empresa);
-    this.sendMailTemplate("bem_vindo_empresa.html", empresa.getEmail(), assuntoEmail, params);
+    this.sendMailTemplate("bem_vindo_empresa.html", empresa.getUsuario().getUsername(), assuntoEmail, params);
     }
 
 

@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,17 +33,21 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+        @Autowired
+    private UsuarioService usuarioService;
+
     /*ENDPOINT DE CLIENTE */
     @Operation(
        summary = "Serviço responsável por salvar um cliente no sistema.",
        description = "Exemplo de descrição de um endpoint responsável por inserir um cliente no sistema."
    )
     @PostMapping
-    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest request) {
+    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) {
 
-        Cliente cliente = clienteService.save(request.build());
+        Cliente cliente = clienteService.save(clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
         return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
     }
+
 
     @GetMapping
     public List<Cliente> listarTodos() {
@@ -53,11 +59,13 @@ public class ClienteController {
         return clienteService.obterPorID(id);
     }   
 
-     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest request) {   
-       clienteService.update(id, request.build());
-       return ResponseEntity.ok().build();
-   }
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
+
+	    clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
+	    return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

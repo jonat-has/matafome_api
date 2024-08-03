@@ -32,7 +32,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Usuario extends EntidadeNegocio implements UserDetails {
 
-   public static final String ROLE_CLIENTE = "CLIENTE";
+    public static final String ROLE_CLIENTE = "CLIENTE"; // Realizar compras no sistema
+    public static final String ROLE_EMPRESA_ADMIN = "EMPRESA_ADMIN"; // READ, DELETE, WRITE, UPDATE.
+    public static final String ROLE_EMPRESA_USER = "EMPRESA_USER"; // READ, WRITE, UPDATE.
+
 
    @JsonIgnore
    @Column(nullable = false)
