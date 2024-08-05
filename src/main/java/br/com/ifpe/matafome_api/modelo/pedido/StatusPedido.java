@@ -1,7 +1,5 @@
 package br.com.ifpe.matafome_api.modelo.pedido;
 
-import java.time.LocalTime;
-
 import org.hibernate.annotations.SQLRestriction;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
@@ -18,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pedido")
+@Table(name = "statusPedido")
 @SQLRestriction("habilitado = true")
 
 
@@ -27,31 +25,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pedido extends EntidadeAuditavel  {
+public class StatusPedido extends EntidadeAuditavel  {
 
     @ManyToOne
       @JoinColumn(nullable = false)
       private Usuario usuario;
   
     @Column
-    private LocalTime hora_pedido;
+    private String descricao;
 
     @Column
-    private String forma_pagamento;
-
-    @Column
-    private String status_pedido;
-
-    @Column
-    private String status_pagamento;
-
-    @Column
-    private String horario;
-
-    @Column
-    private Double valor_total;
-
-    @Column
-    private LocalTime taxa_entrega;
+    private Integer tempo_de_espera;
 
 }
+
