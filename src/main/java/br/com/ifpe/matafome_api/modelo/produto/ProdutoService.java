@@ -23,51 +23,44 @@ public class ProdutoService {
         produto.setVersao(1L);
         produto.setDataCriacao(LocalDate.now());
         Produto produtoSalvo = repository.save(produto);
- 
+
         return produtoSalvo;
- 
     }
 
     public List<Produto> listarTodos() {
-
         return repository.findAll();
     }
 
     public Produto obterPorID(Long id) {
-
         Optional<Produto> consulta = repository.findById(id);
-  
-       if (consulta.isPresent()) {
-           return consulta.get();
-       } else {
-           throw new EntidadeNaoEncontradaException("produto", id);
-       }
 
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("produto", id);
+        }
     }
 
-    @Transactional
+   @Transactional
     public void update(Long id, Produto produtoAlterado) {
 
         Produto produto = repository.findById(id).get();
+       /*produto.setCategoria(produtoAlterado.getCategoria());*/
+        produto.setDescricao(produtoAlterado.getDescricao());
         produto.setNome(produtoAlterado.getNome());
         produto.setPreco(produtoAlterado.getPreco());
-        produto.setCategoria(produtoAlterado.getCategoria());
-        produto.setDescricao(produtoAlterado.getDescricao());
         produto.setImagem(produtoAlterado.getImagem());
-
         produto.setVersao(produto.getVersao() + 1);
         repository.save(produto);
     }
+
 
     @Transactional
     public void delete(Long id) {
-    
-        Produto produto = repository.findById(id).get();
+        Produto produto = repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("produto", id));
         produto.setHabilitado(Boolean.FALSE);
         produto.setVersao(produto.getVersao() + 1);
-    
+
         repository.save(produto);
     }
-
-
 }

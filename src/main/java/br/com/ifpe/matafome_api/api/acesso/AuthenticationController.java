@@ -22,6 +22,7 @@ public class AuthenticationController {
     
     private UsuarioService usuarioService;
 
+
     public AuthenticationController(JwtService jwtService, UsuarioService usuarioService) {
 
         this.jwtService = jwtService;   
@@ -37,6 +38,7 @@ public class AuthenticationController {
 
         Map<Object, Object> loginResponse = new HashMap<>();
         loginResponse.put("username", authenticatedUser.getUsername());
+        loginResponse.put("idUser", authenticatedUser.getId() );
         loginResponse.put("token", jwtToken);
         loginResponse.put("tokenExpiresIn", jwtService.getExpirationTime());
 
