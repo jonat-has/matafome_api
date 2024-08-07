@@ -1,12 +1,10 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import org.hibernate.annotations.SQLRestriction;
-
-import br.com.ifpe.matafome_api.modelo.categoria_produto.Categoria_produto;
-import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -26,12 +24,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Produto extends EntidadeAuditavel {
 
-    /*@ManyToOne
-    private Categoria_produto categoria;*/
-
-   /* @ManyToOne
-    @JoinColumn(name = "id") 
-    private Empresa empresaId;*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prateleira_id")
+    private Prateleira prateleira;
 
     @Column
     private String nome;
