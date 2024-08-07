@@ -1,6 +1,8 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import org.hibernate.annotations.SQLRestriction;
+
+import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

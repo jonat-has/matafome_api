@@ -1,21 +1,56 @@
 package br.com.ifpe.matafome_api.modelo.prateleira;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+
+import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PrateleiraService {
 
     @Autowired
-    private PrateleiraRepository prateleiraRepository;
+    private PrateleiraRepository repository;
 
-    public Prateleira criarPrateleira(Prateleira prateleira) {
-        return prateleiraRepository.save(prateleira);
+    @Transactional
+    public Prateleira save(Prateleira prateleira) {
+        prateleira.setHabilitado(Boolean.TRUE);
+        prateleira.setVersao(1L);
+        prateleira.setDataCriacao(LocalDate.now());
+        Prateleira prateleiraSalva = repository.save(prateleira);
+        return prateleiraSalva;
     }
 
-    public Prateleira buscarPorId(Long id) {
-        Optional<Prateleira> prateleira = prateleiraRepository.findById(id);
-        return prateleira.orElse(null);
+    public List<Prateleira> listarTodos() {
+        return repository.findAll();
+    }
+
+    public Prateleira obterPorID(Long id) {
+        Optional<Prateleira> consulta = repository.findById(id);
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("prateleira", id);
+        }
+    }
+
+    @Transactional
+    public void update(Long id, Prateleira prateleiraAlterada) {
+        Prateleira prateleira = repository.findById(id).get();
+        prateleira.setNome_prateleira(prateleiraAlterada.getNome_prateleira());
+        prateleira.setVersao(prateleira.getVersao() + 1);
+        repository.save(prateleira);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Prateleira prateleira = repository.findById(id).get();
+        prateleira.setHabilitado(Boolean.FALSE);
+        prateleira.setVersao(prateleira.getVersao() + 1);
+        repository.save(prateleira);
     }
 }

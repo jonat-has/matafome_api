@@ -1,6 +1,7 @@
 package br.com.ifpe.matafome_api.modelo.prateleira;
 
 import java.util.List;
+
 import org.hibernate.annotations.SQLRestriction;
 
 import br.com.ifpe.matafome_api.modelo.produto.Produto;
@@ -28,7 +29,7 @@ import lombok.Setter;
 public class Prateleira extends EntidadeAuditavel {
 
     @Column
-    private String descricao;
+    private String nome_prateleira;
 
     @OneToMany(mappedBy = "prateleira", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Produto> produtos;
