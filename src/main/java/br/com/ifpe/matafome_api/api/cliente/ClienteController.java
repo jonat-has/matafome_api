@@ -48,16 +48,29 @@ public class ClienteController {
         return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
     }
 
-
+    @Operation(
+        summary = "Serviço responsável por listar todos os clientes no sistema.",
+        description = "Exemplo de descrição de um endpoint responsável por listar todos os clientes no sistema."
+    )
     @GetMapping
     public List<Cliente> listarTodos() {
         return clienteService.listarTodos();
     }   
 
+    @Operation(
+       summary = "Serviço responsável por obter um cliente no sistema por ID.",
+       description = "Exemplo de descrição de um endpoint responsável por obter um cliente no sistema por ID."
+   )
+
     @GetMapping("/{id}")
     public Cliente obterPorID(@PathVariable Long id) {
         return clienteService.obterPorID(id);
     }   
+
+    @Operation(
+       summary = "Serviço responsável por editar um cliente no sistema.",
+       description = "Exemplo de descrição de um endpoint responsável por editar um cliente no sistema."
+   )
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {

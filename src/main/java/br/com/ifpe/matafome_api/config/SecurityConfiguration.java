@@ -14,7 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtAuthenticationFilter;
 
 
@@ -44,6 +43,7 @@ public class SecurityConfiguration {
                             .requestMatchers(HttpMethod.DELETE, "/api/*/*").permitAll()
                             .requestMatchers(HttpMethod.PUT, "/api/*/*").permitAll()
                             .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api-docs/*").permitAll()
                     /*         
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
