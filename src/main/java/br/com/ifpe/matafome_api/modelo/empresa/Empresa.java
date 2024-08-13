@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,5 +74,10 @@ public class Empresa extends EntidadeAuditavel  {
       @OneToMany(mappedBy = "empresa", orphanRemoval = true, fetch = FetchType.EAGER)
       @Fetch(FetchMode.SUBSELECT)
       private List<Endereco_empresa> enderecos;
+
+      
+      @OneToMany(mappedBy = "empresa", orphanRemoval = true, fetch = FetchType.EAGER)
+      @Fetch(FetchMode.SUBSELECT)
+      private List<Prateleira> prateleira;
 
 }

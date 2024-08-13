@@ -1,5 +1,7 @@
 package br.com.ifpe.matafome_api.api.produto;
 
+
+
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.modelo.produto.Produto;
 import lombok.AllArgsConstructor;
@@ -25,12 +27,12 @@ public class ProdutoRequest {
 
     public Produto build() {
         Produto produto = Produto.builder()
-                .prateleira(prateleira)
-                .nome(this.nome)
-                .preco(this.preco)
-                .descricao(this.descricao)
-                .imagem(this.imagem)
-                .build();
+            .prateleira(prateleira)
+            .nome(this.nome)
+            .preco(this.preco)
+            .descricao(this.descricao)
+            .imagem(this.imagem)
+            .build();
 
         return produto;
     }

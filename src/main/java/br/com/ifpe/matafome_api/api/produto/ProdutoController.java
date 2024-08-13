@@ -3,6 +3,7 @@ package br.com.ifpe.matafome_api.api.produto;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,30 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifpe.matafome_api.modelo.produto.Produto;
 import br.com.ifpe.matafome_api.modelo.produto.ProdutoService;
+import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/produto")
+@RequestMapping("/api/empresa/{empresaId}/prateleira/{prateleiraId}/produto")
 public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
 
-    @PostMapping
-    public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto) {
-        Produto produtoCriado = produtoService.save(produto);
-        return ResponseEntity.ok(produtoCriado);
-    }
-
     @GetMapping
-    public ResponseEntity<List<Produto>> listarTodos() {
+    public ResponseEntity<List<Produto>> listarTodosProdutos() {
         List<Produto> produtos = produtoService.listarTodos();
         return ResponseEntity.ok(produtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> obterPorID(@PathVariable Long id) {
+    public ResponseEntity<Produto> obterPorIDProdutos(@PathVariable Long id) {
         Produto produto = produtoService.obterPorID(id);
         return ResponseEntity.ok(produto);
+    }
+
+    @PostMapping
+    public ResponseEntity<Produto> adicionarProduto(@PathVariable("prateleiraId") Long prateleiraId, @RequestBody @Valid Produto produto) {
+        Produto novoProduto = produtoService.adicionarProduto(prateleiraId, produto);
+        return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -55,9 +57,9 @@ public class ProdutoController {
     }
 
     @PutMapping("/{produtoId}/prateleira/{novaPrateleiraId}")
-    public ResponseEntity<Produto> atualizarCategoria(@PathVariable Long produtoId,
+    public ResponseEntity<Produto> atualizarPrateleiraDoProduto(@PathVariable Long produtoId,
             @PathVariable Long novaPrateleiraId) {
-        Produto produtoAtualizado = produtoService.atualizarCategoria(produtoId, novaPrateleiraId);
+        Produto produtoAtualizado = produtoService.atualizarPrateleira(produtoId, novaPrateleiraId);
         return ResponseEntity.ok(produtoAtualizado);
     }
 }

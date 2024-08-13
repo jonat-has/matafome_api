@@ -3,7 +3,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,13 +38,11 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf
                 .disable())
                 .authorizeHttpRequests(requests -> requests
-                            .requestMatchers(HttpMethod.POST, "/api/*").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/*").permitAll()
-                            .requestMatchers(HttpMethod.DELETE, "/api/*/*").permitAll()
-                            .requestMatchers(HttpMethod.PUT, "/api/*/*").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()
+                .anyRequest().permitAll()
+
+                            /*.requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api-docs/*").permitAll()
-                    /*         
+                            
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth").permitAll()
@@ -55,9 +53,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/produto/*").hasAnyAuthority(Usuario.ROLE_EMPRESA_ADMIN, Usuario.ROLE_EMPRESA_USER) //Alteração de produto
                         .requestMatchers(HttpMethod.DELETE, "/api/produto/*").hasAnyAuthority(Usuario.ROLE_EMPRESA_ADMIN) //Exclusão de produto
                         .requestMatchers(HttpMethod.GET, "/api/produto/").hasAnyAuthority(Usuario.ROLE_CLIENTE, Usuario.ROLE_EMPRESA_ADMIN, Usuario.ROLE_EMPRESA_USER) //Consulta de produto
-                            */
+                            
                         .anyRequest()
-                        .authenticated())
+                        .authenticated()*/)
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

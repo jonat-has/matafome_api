@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
+import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.transaction.Transactional;
 
@@ -16,13 +18,23 @@ public class PrateleiraService {
     @Autowired
     private PrateleiraRepository repository;
 
+    @Autowired
+    private EmpresaService empresaService;
+
     @Transactional
-    public Prateleira save(Prateleira prateleira) {
+    public Prateleira save(Prateleira prateleira, Long empresaId) {
+
         prateleira.setHabilitado(Boolean.TRUE);
         prateleira.setVersao(1L);
         prateleira.setDataCriacao(LocalDate.now());
-        Prateleira prateleiraSalva = repository.save(prateleira);
-        return prateleiraSalva;
+           // Obter a empresa pelo ID
+        Empresa empresa = empresaService.obterPorID(empresaId);
+
+        // Associar a prateleira à empresa
+        prateleira.setEmpresa(empresa);
+
+        return repository.save(prateleira);
+
     }
 
     public List<Prateleira> listarTodos() {
@@ -30,12 +42,15 @@ public class PrateleiraService {
     }
 
     public Prateleira obterPorID(Long id) {
+
         Optional<Prateleira> consulta = repository.findById(id);
+
         if (consulta.isPresent()) {
             return consulta.get();
         } else {
             throw new EntidadeNaoEncontradaException("prateleira", id);
         }
+        
     }
 
     @Transactional
@@ -53,4 +68,5 @@ public class PrateleiraService {
         prateleira.setVersao(prateleira.getVersao() + 1);
         repository.save(prateleira);
     }
+    
 }

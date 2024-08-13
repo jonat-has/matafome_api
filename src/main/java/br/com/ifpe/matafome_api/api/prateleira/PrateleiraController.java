@@ -16,22 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.modelo.prateleira.PrateleiraService;
 
+
 @RestController
-@RequestMapping("/api/prateleira")
+@RequestMapping("/api/empresa/{empresaId}/prateleira")
 public class PrateleiraController {
 
     @Autowired
     private PrateleiraService prateleiraService;
 
     @PostMapping
-    public ResponseEntity<Prateleira> criarPrateleira(@RequestBody Prateleira prateleira) {
-        Prateleira prateleiraCriada = prateleiraService.save(prateleira);
+    public ResponseEntity<Prateleira> criarPrateleira(@RequestBody Prateleira prateleira, @PathVariable Long empresaId) {
+        Prateleira prateleiraCriada = prateleiraService.save(prateleira, empresaId);
         return ResponseEntity.ok(prateleiraCriada);
     }
 
     @GetMapping
     public ResponseEntity<List<Prateleira>> listarTodos() {
         List<Prateleira> prateleiras = prateleiraService.listarTodos();
+        
         return ResponseEntity.ok(prateleiras);
     }
 
@@ -54,4 +56,6 @@ public class PrateleiraController {
         prateleiraService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }
