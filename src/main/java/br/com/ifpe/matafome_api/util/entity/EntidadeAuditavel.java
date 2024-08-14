@@ -35,11 +35,13 @@ public abstract class EntidadeAuditavel extends EntidadeNegocio {
     @LastModifiedDate
     private LocalDate dataUltimaModificacao;
 
+    @JsonIgnore
     @CreatedBy
     @ManyToOne
     @JoinColumn
     private Usuario criadoPor;
 
+    @JsonIgnore
     @LastModifiedBy
     @ManyToOne
     @JoinColumn

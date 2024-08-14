@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "itensPedido")
+@Table(name = "statusPedido")
 @SQLRestriction("habilitado = true")
 
 
@@ -22,20 +22,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+public class Status_pedido extends EntidadeAuditavel  {
 
-public class ItensPedido extends EntidadeAuditavel {
-    
-    @Column
-    private Integer id_produto;
 
     @Column
-    private Integer id_pedido;
-
-    @Column
-    private Integer quantidade;
-
-    @Column
-    private Float valor;
+    private String descricao;
 
 
 }
+

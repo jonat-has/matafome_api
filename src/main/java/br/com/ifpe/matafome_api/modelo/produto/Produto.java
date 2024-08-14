@@ -40,7 +40,7 @@ public class Produto extends EntidadeAuditavel {
 
     @Column
     private String descricao;
-
+    
     @Column
-    private String imagem;
+    private String url_imagem;
 }
