@@ -20,67 +20,102 @@
         background:#ffffff !important;
       }
     }
+	body {
+            background: #f9f9f9;
+            font-family: 'Open Sans', 'Tahoma', sans-serif;
+            line-height: 2.1em;
+            color: #333333;
+        }
+        .container {
+            width: 60.5em;
+            max-width: 100%;
+            background: #ffffff;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: #ff6600; /* Laranja */
+            color: #ffffff;
+            padding: 1.5em;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+			display: flex;
+			justify-content: center;
+			
+        }
+        .separator {
+            background: #ffcc00; /* Amarelo */
+            height: 0.2em;
+        }
+        .content {
+            padding: 1.5em;
+            color: #333333;
+        }
+        .content p {
+            margin: 0 0 1em;
+        }
+        .content b {
+            color: #28a745; /* Verde */
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 0.75em 1.5em;
+            margin-top: 1em;
+            background: #28a745; /* Verde */
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .cta-button:hover {
+            background: #218838; /* Verde mais escuro */
+        }
+        .footer {
+            background: #ffcc00; /* Amarelo */
+            color: #333333;
+            padding: 1.5em;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 1rem;
+            font-style: italic;
+            margin: 0;
+        }
   </style>
 </head>
 
-<body class="body" style="margin: 0; padding: 0; background:#f9f9f9; font-family: 'Open Sans', 'Tahoma', sans-serif; line-height: 2.1em;">
-	
-	<div role="article" aria-roledescription="email" lang="pt-BR" dir="ltr" style="font-size:medium; font-size:max(16px, 1rem); font-family: 'Open Sans', 'Tahoma', sans-serif; line-height: 2.1em;">
+<body>
 
-    	<table role="presentation" style="width: 60.5em; max-width:100%; background:#ffffff; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-    	
-    		<tr>
-    			<td>
+    <div class="container" role="article" aria-roledescription="email" lang="pt-BR" dir="ltr">
+        <!-- Header -->
+        <div class="header">
+            
+			<img src="./mata.png" alt="Mascote Matafome">
+        </div>
 
-					</br>
+        <!-- Separator -->
+        <hr class="separator">
 
-  					<table role="presentation" style="width:100%; background:#ffffff; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td style="padding: 0 1.5em;">
-    							<hr style="border-width: 0; background: #c0c0c0; color: #c0c0c0; height:.15em">
-  							</td>
-  						</tr>
-  					</table>
+        <!-- Content -->
+        <div class="content">
+            <p>Olá, <span th:text="${empresa.razao_social} ?: 'Empresa'"></span>!</p>
+            <p>Estamos felizes em informar que seu cadastro foi concluído com <b>sucesso!</b></p>
+            <p>A partir de agora, você pode desfrutar de uma experiência de pedidos muito mais simples e seguro para o seu negócio, tanto no computador quanto no celular. Nossa plataforma foi projetada para tornar sua jornada ainda mais agradável, oferecendo uma navegação intuitiva e um processo de venda descomplicado.</p>
+            <p>Explore uma ampla gama de funcionalidade e descubra uma variedade de ferramentas que atendem a todas as suas necessidades. De pratos sofisticados a opções mais informais, garantimos que você encontrará algo que vai ao encontro das suas expectativas. E o melhor: você pode comparar flexibilidade e qualidade para fazer a escolha que melhor se adapta aos seus critérios.</p>
+            <p>Seja para uma refeição rápida ou uma ocasião especial, estamos aqui para tornar sua experiência a melhor possível. Se precisar de ajuda ou tiver alguma dúvida, nossa equipe de suporte está sempre à disposição para auxiliá-lo.</p>
+            <p>Bem-vindo à nossa comunidade! Estamos ansiosos para que realize suas vendas e esperamos que você aproveite cada momento.</p>
+            <a href="#" class="cta-button">Comece já!</a>
+        </div>
 
-  					<table role="presentation" style="width:100%; background:#ffffff; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td style="padding: 0 1.5em;">
-    							<h1 style="text-align: center; font-size: 1.5em; margin-bottom: 1.5rem;">Bem vindo ao nosso aplicativo!</h1>
-  							</td>
-  						</tr>
-  					</table>
-  
-  					<table role="presentation" style="width:100%; background:#ffffff; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td style="padding: 0 1.5em;">
-    							<hr style="border-width: 0; background: #c0c0c0; color: #c0c0c0; height:.15em">
-  							</td>
-  						</tr>
-  					</table>
+        <!-- Footer -->
+        <div class="footer">
+            <p>Atenciosamente,<br> <span>equipe Matafome.</span></p>
+        </div>
+    </div>
 
-  					<table role="presentation" style="width:100%; background:#ffffff; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td style="padding: 0 1.5em;">
-    							<p>Prezado <span th:text="${empresa.razao_social} ?: ''"></span></p>
-    							<p>Seu cadastro foi realizado com <b>sucesso</b>, seja bem-vindo ao nosso Aplicativo!</p>
-    							<p>Agora é muito mais fácil e seguro realizar pedidos, seja pelo computador ou celular.<br>
-      							Conheça nossos produtos e desfrute da melhor relação qualidade/preço do mercado!</p>
-  							</td>
-  						</tr>
-  					</table>
-  
-  					<table role="presentation" style="line-height: 1.3rem; font-size: 1rem; font-style: italic; color: #5a5a5a; width:100%; margin: 0 auto;" align="center" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td style="padding: 2em 1.5em 1em">
-    							<p>Atenciosamente,<br> <span>Equipe Matafome - IFPE Campus Jaboatão</span></p>
-  							</td>
-  						</tr>
-  					</table>
-  
-				</td>
-			</tr>
-		</table>
-
-	</div>
 </body>
 </html>
