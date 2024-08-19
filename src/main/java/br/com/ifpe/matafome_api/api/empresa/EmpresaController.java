@@ -33,9 +33,9 @@ public class EmpresaController {
     /*End point de Empresa */
     /*ENDPOINT PUBLICO */
     @Operation(
-       summary = "Serviço responsável por salvar uma empresa no sistema.",
-       description = "Exemplo de descrição de um endpoint responsável por inserir uma empresa no sistema."
-   )
+        summary = "Cadastro de uma nova empresa.",
+        description = "Este endpoint permite a criação de uma nova empresa no sistema. Requer informações como razão social, nome fantasia, CNPJ, entre outros."
+    )
     @PostMapping
     public ResponseEntity<Empresa> save(@RequestBody @Valid EmpresaRequest request) {
 
@@ -48,28 +48,29 @@ public class EmpresaController {
 
     /*ESSE ENDPOINT TEM Q SER ADMINONLY */
     @Operation(
-        summary = "Serviço responsável por todas as empresas cadastradas no sistema.",
-        description = "Exemplo de descrição de um endpoint retorna dados de empresas cadastrada no sistema."
+        summary = "Listar todas as empresas cadastradas.",
+        description = "Este endpoint retorna uma lista de todas as empresas cadastradas no sistema. Somente administradores podem acessar."
     )
     @GetMapping
     public List<Empresa> listarTodos() {
         return empresaService.listarTodos();
     }   
 
-    /*APENAS SE ESTIVER LOGADO PARA TER ACESSO A ESSE ENPOINT */
+
+    /* ENDPOINT RESTRITO - LOGIN NECESSÁRIO */
     @Operation(
-        summary = "Serviço responsável por retorna dados de uma empresa cadastrada no sistema.",
-        description = "Exemplo de descrição de um endpoint retorna dados de uma empresa cadastrada no sistema."
+        summary = "Obter detalhes de uma empresa.",
+        description = "Recupera os dados de uma empresa específica com base no seu ID. Requer autenticação."
     )
     @GetMapping("/{id}")
     public Empresa obterPorID(@PathVariable Long id) {
         return empresaService.obterPorID(id);
     }   
 
-    /*APENAS SE ESTIVER LOGADO PARA TER ACESSO A ESSE ENPOINT */
+    /* ENDPOINT RESTRITO - LOGIN NECESSÁRIO */
     @Operation(
-        summary = "Serviço responsável por atualizar dados de uma empresa cadastrada no sistema.",
-        description = "Exemplo de descrição de um endpoint atualizar dados de uma empresa cadastrada no sistema."
+        summary = "Atualizar dados de uma empresa.",
+        description = "Permite atualizar parcialmente as informações de uma empresa já cadastrada, como razão social, nome fantasia, etc. Requer autenticação."
     )
     @PatchMapping("/{idEmpresa}")
     public ResponseEntity<Empresa> atualizarEmpresa( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEmpresaRequest request) {
@@ -79,11 +80,11 @@ public class EmpresaController {
         return ResponseEntity.ok(empresaAtualizada);
     }
 
-   /*APENAS SE ESTIVER LOGADO PARA TER ACESSO A ESSE ENPOINT */
-   @Operation(
-    summary = "Serviço responsável por atualizar dados de uma empresa cadastrada no sistema.",
-    description = "Exemplo de descrição de um endpoint atualizar dados de uma empresa cadastrada no sistema."
-)
+    /* ENDPOINT RESTRITO - LOGIN NECESSÁRIO */
+    @Operation(
+        summary = "Excluir uma empresa do sistema.",
+        description = "Remove uma empresa do sistema com base no seu ID. Requer autenticação."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
@@ -91,15 +92,21 @@ public class EmpresaController {
        return ResponseEntity.ok().build();
    }
 
-   @Operation(
-    summary = "Serviço responsável por retorna endereço de uma empresa cadastrada no sistema.",
-    description = "Enviar id da empresa atraves da requisição para retorna o endereço dessa empresa."
-)
+    /* ENDPOINT RESTRITO - LOGIN NECESSÁRIO */
+    @Operation(
+        summary = "Obter endereço de uma empresa.",
+        description = "Recupera o endereço de uma empresa específica usando seu ID. O endereço é retornado junto com os dados da empresa."
+    )
    @GetMapping("/{idEmpresa}/endereco")
    public Empresa_enderecoResponse obterEmpresaComEndereco(@PathVariable Long idEmpresa) {
        return empresaService.obterEmpresaComEndereco(idEmpresa);
    }
 
+    /* ENDPOINT RESTRITO - LOGIN NECESSÁRIO */
+    @Operation(
+        summary = "Atualizar o endereço de uma empresa.",
+        description = "Permite atualizar parcialmente o endereço de uma empresa já cadastrada no sistema com base no ID da empresa. Requer autenticação."
+    )
     @PatchMapping("/{idEmpresa}/endereco")
     public ResponseEntity<Endereco_empresa> atualizarEndereco( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEnderecoRequest request) {
 
