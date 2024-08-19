@@ -17,11 +17,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -51,10 +54,13 @@ public class Empresa extends EntidadeAuditavel  {
       private String cnpj;
 
       @Column
-      private String horario;
+      private LocalTime horario_abertura;
 
       @Column
       private String img_capa;
+
+      @Column
+      private LocalTime horario_fechamento;
 
       @Column
       private LocalTime tempo_entrega;
@@ -71,13 +77,14 @@ public class Empresa extends EntidadeAuditavel  {
       @Column
       private String categoria;
 
-      @OneToMany(mappedBy = "empresa", orphanRemoval = true, fetch = FetchType.EAGER)
-      @Fetch(FetchMode.SUBSELECT)
-      private List<Endereco_empresa> enderecos;
+      @OneToOne
+      @JoinColumn(nullable = false)
+      private Endereco_empresa endereco;
 
       
       @OneToMany(mappedBy = "empresa", orphanRemoval = true, fetch = FetchType.EAGER)
       @Fetch(FetchMode.SUBSELECT)
+      @JsonIgnore
       private List<Prateleira> prateleira;
 
 }

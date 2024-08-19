@@ -1,13 +1,19 @@
 package br.com.ifpe.matafome_api.modelo.empresa;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.api.empresa.AtualizacaoEmpresaRequest;
+import br.com.ifpe.matafome_api.api.empresa.AtualizacaoEnderecoRequest;
+import br.com.ifpe.matafome_api.api.empresa.Empresa_enderecoResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
@@ -30,10 +36,14 @@ public class EmpresaService {
 
     /*Funções de empresa */
 
+
     @Transactional
     public Empresa save(Empresa empresa) {
 
         usuarioService.save(empresa.getUsuario());
+        
+        Endereco_empresa enderecoSalvo = salvarEndereco_empresa(empresa.getEndereco());
+        empresa.setEndereco(enderecoSalvo);
 
         empresa.setHabilitado(Boolean.TRUE);
         empresa.setVersao(1L);
@@ -43,6 +53,27 @@ public class EmpresaService {
         emailService.enviarEmailConfirmacaoCadastroEmpresa(empresaSalvo);
  
         return empresaSalvo;
+ 
+    }
+
+    @Transactional
+    public Endereco_empresa salvarEndereco_empresa(Endereco_empresa endereco) {
+
+        endereco.setCep(endereco.getCep());
+        endereco.setLogradouro(endereco.getLogradouro());
+        endereco.setComplemento(endereco.getComplemento());
+        endereco.setNumero(endereco.getNumero());
+        endereco.setBairro(endereco.getBairro());
+        endereco.setCidade(endereco.getCidade());
+        endereco.setEstado(endereco.getEstado());
+
+
+        endereco.setHabilitado(Boolean.TRUE);
+        endereco.setVersao(1L);
+        endereco.setDataCriacao(LocalDate.now());
+        Endereco_empresa enderecoSalvo = endereco_empresaRepository.save(endereco);
+ 
+        return enderecoSalvo;
  
     }
 
@@ -63,25 +94,26 @@ public class EmpresaService {
 
     }
 
-
     @Transactional
-    public void update(Long id, Empresa empresaAlterado) {
+    public Empresa atualizarEmpresa(Long id, AtualizacaoEmpresaRequest request) {
+        Empresa empresa = repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", id));
 
-        Empresa empresa = repository.findById(id).get();
-        empresa.setRazao_social(empresaAlterado.getRazao_social());
-        empresa.setNome_fantasia(empresaAlterado.getNome_fantasia());
-        empresa.setCnpj(empresaAlterado.getCnpj());
-        empresa.setHorario(empresaAlterado.getHorario());
-        empresa.setImg_capa(empresaAlterado.getImg_capa());
-        empresa.setImg_perfil(empresaAlterado.getImg_perfil());
-        empresa.setTempo_entrega(empresaAlterado.getTempo_entrega());
-        empresa.setTaxa_frete(empresaAlterado.getTaxa_frete());
-        empresa.setTelefone(empresaAlterado.getTelefone());
-        empresa.setCategoria(empresaAlterado.getCategoria());
-        
+        // Atualizar apenas os campos presentes no DTO
+        BeanUtils.copyProperties(request, empresa, getNullPropertyNamesEmpresa(request));
 
         empresa.setVersao(empresa.getVersao() + 1);
-        repository.save(empresa);
+        return repository.save(empresa);
+    }
+
+    // Método auxiliar para pegar nomes das propriedades nulas
+    private String[] getNullPropertyNamesEmpresa(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        return Arrays.stream(pds)
+                .filter(pd -> src.getPropertyValue(pd.getName()) == null)
+                .map(pd -> pd.getName())
+                .toArray(String[]::new);
     }
 
     @Transactional
@@ -94,62 +126,52 @@ public class EmpresaService {
         repository.save(empresa);
     }
 
+
+
+
     /*Funções de Endereços de empresa */
-
     @Transactional
-    public Endereco_empresa adicionarEndereco_empresa(Long empresaId, Endereco_empresa endereco) {
+    public Endereco_empresa atualizarEndereco_empresa(Long idEmpresa, AtualizacaoEnderecoRequest request) {
 
-        Empresa empresa = this.obterPorID(empresaId);
-        
-        //Primeiro salva o Endereco_empresa:
+        Empresa empresa = repository.findById(idEmpresa).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", idEmpresa));
+        Endereco_empresa endereco = empresa.getEndereco();
 
-        endereco.setEmpresa(empresa);
-        endereco.setHabilitado(Boolean.TRUE);
-        endereco_empresaRepository.save(endereco);
-        
-        //Depois acrescenta o endereço criado ao empresa e atualiza o empresa:
+        // Atualizar apenas os campos presentes no DTO
+        BeanUtils.copyProperties(request, endereco, getNullPropertyNames(request));
 
-        List<Endereco_empresa> listaEndereco_empresa = empresa.getEnderecos();
-        
-        if (listaEndereco_empresa == null) {
-            listaEndereco_empresa = new ArrayList<Endereco_empresa>();
-        }
-        
-        listaEndereco_empresa.add(endereco);
-        empresa.setEnderecos(listaEndereco_empresa);
-        empresa.setVersao(empresa.getVersao() + 1);
-        repository.save(empresa);
-        
-        return endereco;
+        return endereco_empresaRepository.save(endereco);
     }
 
-    
-   @Transactional
-   public Endereco_empresa atualizarEndereco_empresa(Long id, Endereco_empresa enderecoAlterado) {
+    // Método auxiliar para pegar nomes das propriedades nulas
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-       Endereco_empresa endereco = endereco_empresaRepository.findById(id).get();
-       endereco.setNumero(enderecoAlterado.getNumero());
-       endereco.setBairro(enderecoAlterado.getBairro());
-       endereco.setCep(enderecoAlterado.getCep());
-       endereco.setCidade(enderecoAlterado.getCidade());
-       endereco.setEstado(enderecoAlterado.getEstado());
-       endereco.setComplemento(enderecoAlterado.getComplemento());
-       endereco.setLogradouro(enderecoAlterado.getLogradouro());
-
-       return endereco_empresaRepository.save(endereco);
-   }
-
-   @Transactional
-    public void removerEndereco_empresa(Long id) {
-
-        Endereco_empresa endereco = endereco_empresaRepository.findById(id).get();
-        endereco.setHabilitado(Boolean.FALSE);
-        endereco_empresaRepository.save(endereco);
-
-        Empresa empresa = this.obterPorID(endereco.getEmpresa().getId());
-        empresa.getEnderecos().remove(endereco);
-        empresa.setVersao(empresa.getVersao() + 1);
-        repository.save(empresa);
+        return Arrays.stream(pds)
+                .filter(pd -> src.getPropertyValue(pd.getName()) == null)
+                .map(pd -> pd.getName())
+                .toArray(String[]::new);
     }
+
+   @Transactional
+   public Empresa_enderecoResponse obterEmpresaComEndereco(Long id) {
+    Empresa empresa = repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", id));
+
+    Endereco_empresa endereco = empresa.getEndereco();
+
+    return Empresa_enderecoResponse.builder()
+            .id(empresa.getId())
+            .razao_social(empresa.getRazao_social())
+            .endereco(Empresa_enderecoResponse.EnderecoResponse.builder()
+                    .cep(endereco.getCep())
+                    .logradouro(endereco.getLogradouro())
+                    .complemento(endereco.getComplemento())
+                    .numero(endereco.getNumero())
+                    .bairro(endereco.getBairro())
+                    .cidade(endereco.getCidade())
+                    .estado(endereco.getEstado())
+                    .build())
+            .build();
+}
 
 }

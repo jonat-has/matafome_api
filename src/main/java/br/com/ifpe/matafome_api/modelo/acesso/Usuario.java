@@ -37,14 +37,12 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
     public static final String ROLE_EMPRESA_USER = "EMPRESA_USER"; // READ, WRITE, UPDATE.
 
 
-   @JsonIgnore
-   @Column(nullable = false)
+   @Column(nullable = false, unique = true)
    private String username;
 
-
-    @JsonIgnore
-    @Column(nullable = false)
-    private String password;
+   @JsonIgnore
+   @Column(nullable = false)
+   private String password;
 
    @JsonIgnore
    @ElementCollection(fetch = FetchType.EAGER)

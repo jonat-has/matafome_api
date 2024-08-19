@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLRestriction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.FetchMode;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
@@ -47,10 +50,12 @@ public class Cliente extends EntidadeAuditavel {
 
     @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
+    @JsonIgnore
     private List<Endereco_cliente> enderecos;
 
     @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
+    @JsonIgnore
     private List<Forma_pagamento> forma_pagamento;
 
 }
