@@ -3,7 +3,10 @@ package br.com.ifpe.matafome_api.api.acesso;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,11 +50,15 @@ public class AuthenticationController {
         return loginResponse;
     }    
 
-    @PostMapping("validar/{userId}")
-    public void validarEmail(@PathVariable Long userId) {
-        
-        usuarioService.validarEmail(userId);
-        
+ @GetMapping("/validar/{idUser}")
+    public ResponseEntity<String> validarEmail(@PathVariable Long idUser) {
+        boolean isEmailValidated = usuarioService.validarEmail(idUser);
+
+        if (isEmailValidated) {
+            return ResponseEntity.ok("Email validado com sucesso!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao validar o email.");
+        }
     }
     
 }

@@ -82,13 +82,15 @@ public class UsuarioService implements UserDetailsService {
     return usuarioLogado;
     }
 
-    public void validarEmail(Long userId) {
+    public boolean validarEmail(Long userId) {
 
         Usuario user = repository.findById(userId).get();
         
         user.setEmailvalidado(Boolean.TRUE);
 
         repository.save(user);
+
+        return user.getEmailvalidado();
     }
 
 }
