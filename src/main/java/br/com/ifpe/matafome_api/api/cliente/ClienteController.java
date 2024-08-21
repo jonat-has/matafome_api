@@ -21,6 +21,7 @@ import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -42,7 +43,7 @@ public class ClienteController {
        description = "Exemplo de descrição de um endpoint responsável por inserir um cliente no sistema."
    )
     @PostMapping
-    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) {
+    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) throws MessagingException {
 
         System.out.println(clienteRequest.toString());
         Cliente cliente = clienteService.save(clienteRequest.build(), usuarioService.obterUsuarioLogado(request));

@@ -49,26 +49,34 @@ public class EmailService {
 
     private JavaMailSender emailSender;
 
-    public void enviarEmailConfirmacaoCadastroCliente(Cliente cliente) {
+    public void enviarEmailConfirmacaoCadastroCliente(Cliente cliente) throws MessagingException {
 
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
 
         Context params = new Context();
+        params.setVariable("codigo", cliente.getUsuario().getActiveCode());
         params.setVariable("cliente", cliente);
+        
 
         this.sendMailTemplate("bem_vindo_cliente.html", cliente.getUsuario().getUsername(), assuntoEmail, params);
     }
 
-    public void enviarEmailConfirmacaoCadastroEmpresa(Empresa empresa) {
-    String assuntoEmail = "Bem vindo ao nosso aplicativo";
-    Context params = new Context();
-    params.setVariable("empresa", empresa);
-    this.sendMailTemplate("bem_vindo_empresa.html", empresa.getUsuario().getUsername(), assuntoEmail, params);
+    public void enviarEmailConfirmacaoCadastroEmpresa(Empresa empresa) throws MessagingException {
+
+        String assuntoEmail = "Bem vindo ao nosso aplicativo";
+        Context params = new Context();
+
+        params.setVariable("codigo", empresa.getUsuario().getActiveCode());
+        params.setVariable("empresa", empresa); 
+        params.setVariable("idUser", empresa.getUsuario().getId());
+        
+        
+        this.sendMailTemplate("bem_vindo_empresa.html", empresa.getUsuario().getUsername(), assuntoEmail, params);
     }
 
 
     @Async
-    private void sendMailTemplate(String template, String to, String subject, Context params) {
+    private void sendMailTemplate(String template, String to, String subject, Context params) throws MessagingException {
 
          TemplateEngine templateEngine = new SpringTemplateEngine();
 
@@ -86,13 +94,13 @@ public class EmailService {
     }
 
     @Async
-    private void sendMail(String to, String subject, String content, Boolean html) {
+    private void sendMail(String to, String subject, String content, Boolean html) throws MessagingException {
 
         emailSender = getJavaMailSender();
 
         MimeMessage message = emailSender.createMimeMessage();
 
-        MimeMessageHelper helper = new MimeMessageHelper(message);
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         try {
 

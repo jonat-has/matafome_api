@@ -56,11 +56,17 @@ public class UsuarioService implements UserDetailsService {
         return repository.findByUsername(username).get();
     }
 
+    public Integer reedemCode() {
+        return (int) (Math.random() * 9000) + 1000;  
+    }
+
     @Transactional
     public Usuario save(Usuario user) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setHabilitado(Boolean.TRUE);
+        user.setEmailvalidado(Boolean.FALSE);
+        user.setActiveCode(reedemCode());
         return repository.save(user);
     }
 
@@ -74,6 +80,15 @@ public class UsuarioService implements UserDetailsService {
         return usuarioLogado;
     }
     return usuarioLogado;
+    }
+
+    public void validarEmail(Long userId) {
+
+        Usuario user = repository.findById(userId).get();
+        
+        user.setEmailvalidado(Boolean.TRUE);
+
+        repository.save(user);
     }
 
 }

@@ -12,6 +12,7 @@ import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 
 
@@ -36,7 +37,7 @@ public class ClienteService {
 
     /*Funções de cliente */
     @Transactional
-    public Cliente save(Cliente cliente, Usuario usuarioLogado) {
+    public Cliente save(Cliente cliente, Usuario usuarioLogado) throws MessagingException {
 
         usuarioService.save(cliente.getUsuario());
 

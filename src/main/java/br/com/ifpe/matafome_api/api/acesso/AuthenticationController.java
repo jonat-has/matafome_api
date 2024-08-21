@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtService;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -44,4 +46,12 @@ public class AuthenticationController {
 
         return loginResponse;
     }    
+
+    @PostMapping("validar/{userId}")
+    public void validarEmail(@PathVariable Long userId) {
+        
+        usuarioService.validarEmail(userId);
+        
+    }
+    
 }

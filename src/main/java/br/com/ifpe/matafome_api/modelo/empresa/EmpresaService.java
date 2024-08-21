@@ -17,6 +17,7 @@ import br.com.ifpe.matafome_api.api.empresa.Empresa_enderecoResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -38,7 +39,7 @@ public class EmpresaService {
 
 
     @Transactional
-    public Empresa save(Empresa empresa) {
+    public Empresa save(Empresa empresa) throws MessagingException {
 
         usuarioService.save(empresa.getUsuario());
         

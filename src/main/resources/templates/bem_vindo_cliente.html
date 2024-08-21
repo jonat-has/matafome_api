@@ -95,8 +95,7 @@
     <div class="container" role="article" aria-roledescription="email" lang="pt-BR" dir="ltr">
         <!-- Header -->
         <div class="header">
-            
-			<img src="./mata.png" alt="Mascote Matafome">
+			<img th:src="@{https://firebasestorage.googleapis.com/v0/b/upload-image-6a82d.appspot.com/o/45.jpg?alt=media&token=b19a045f-6d07-4af9-9bd0-2f947b82c9a9}" alt="Logo Matafome">
         </div>
 
         <!-- Separator -->
@@ -106,11 +105,12 @@
         <div class="content">
             <p>Olá<span th:text="${cliente.nome} ?: 'Cliente'"></span>!</p>
             <p>Estamos felizes em informar que seu cadastro foi concluído com <b>sucesso!</b></p>
+            <p>Seu código de verificação é: <b th:text="${codigo}"></b></p>
             <p>A partir de agora, você pode desfrutar de uma experiência de pedidos muito mais simples e segura, tanto no computador quanto no celular. Nossa plataforma foi projetada para tornar sua jornada ainda mais agradável, oferecendo uma navegação intuitiva e um processo de compra descomplicado.</p>
             <p>Explore uma ampla gama de produtos e descubra uma variedade de restaurantes que atendem a todos os gostos e preferências. De pratos sofisticados a opções mais informais, garantimos que você encontrará algo que vai ao encontro das suas expectativas. E o melhor: você pode comparar preços e qualidade para fazer a escolha que melhor se adapta ao seu orçamento e paladar.</p>
             <p>Seja para uma refeição rápida ou uma ocasião especial, estamos aqui para tornar sua experiência a melhor possível. Se precisar de ajuda ou tiver alguma dúvida, nossa equipe de suporte está sempre à disposição para auxiliá-lo.</p>
             <p>Bem-vindo à nossa comunidade! Estamos ansiosos para servi-lo e esperamos que você aproveite cada momento.</p>
-            <a href="#" class="cta-button">Faça o seu pedido!</a>
+            <a href="#" class="cta-button">Validar codigo!</a>
         </div>
 
         <!-- Footer -->

@@ -44,5 +44,5 @@ public class Prateleira extends EntidadeAuditavel {
     @OneToMany(mappedBy = "prateleira", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     private List<Produto> produtos;
-    /*funciona pfv */
+    
 }

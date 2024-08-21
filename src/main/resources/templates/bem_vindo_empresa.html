@@ -35,13 +35,13 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .header {
+            display: flex;
+            justify-content: center;
             background: #ff6600; /* Laranja */
             color: #ffffff;
             padding: 1.5em;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
-			display: flex;
-			justify-content: center;
 			
         }
         .separator {
@@ -93,8 +93,13 @@
     <div class="container" role="article" aria-roledescription="email" lang="pt-BR" dir="ltr">
         <!-- Header -->
         <div class="header">
-            
-			<img src="./mata.png" alt="Mascote Matafome">
+            <table align="center" width="100%" role="presentation">
+                <tr>
+                    <td style="text-align: center;">
+                        <img th:src="@{https://firebasestorage.googleapis.com/v0/b/upload-image-6a82d.appspot.com/o/mata.png?alt=media&token=a4ca17b7-68db-4e95-acc7-b7324bd81f54}" alt="Logo Matafome" style="display: block; margin: 0 auto;"/>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <!-- Separator -->
@@ -104,11 +109,12 @@
         <div class="content">
             <p>Olá, <span th:text="${empresa.razao_social} ?: 'Empresa'"></span>!</p>
             <p>Estamos felizes em informar que seu cadastro foi concluído com <b>sucesso!</b></p>
+            <p>Seu código de verificação é: <b th:text="${codigo}"></b></p>
             <p>A partir de agora, você pode desfrutar de uma experiência de pedidos muito mais simples e seguro para o seu negócio, tanto no computador quanto no celular. Nossa plataforma foi projetada para tornar sua jornada ainda mais agradável, oferecendo uma navegação intuitiva e um processo de venda descomplicado.</p>
             <p>Explore uma ampla gama de funcionalidade e descubra uma variedade de ferramentas que atendem a todas as suas necessidades. De pratos sofisticados a opções mais informais, garantimos que você encontrará algo que vai ao encontro das suas expectativas. E o melhor: você pode comparar flexibilidade e qualidade para fazer a escolha que melhor se adapta aos seus critérios.</p>
             <p>Seja para uma refeição rápida ou uma ocasião especial, estamos aqui para tornar sua experiência a melhor possível. Se precisar de ajuda ou tiver alguma dúvida, nossa equipe de suporte está sempre à disposição para auxiliá-lo.</p>
             <p>Bem-vindo à nossa comunidade! Estamos ansiosos para que realize suas vendas e esperamos que você aproveite cada momento.</p>
-            <a href="#" class="cta-button">Comece já!</a>
+            <a href="https://matafome-api.onrender.com/api/auth/validar/${idUser}" class="cta-button">Validar Codigo!</a>
         </div>
 
         <!-- Footer -->

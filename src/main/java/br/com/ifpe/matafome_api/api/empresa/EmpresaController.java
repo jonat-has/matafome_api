@@ -19,6 +19,7 @@ import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.modelo.empresa.Endereco_empresa;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -37,7 +38,7 @@ public class EmpresaController {
         description = "Este endpoint permite a criação de uma nova empresa no sistema. Requer informações como razão social, nome fantasia, CNPJ, entre outros."
     )
     @PostMapping
-    public ResponseEntity<Empresa> save(@RequestBody @Valid EmpresaRequest request) {
+    public ResponseEntity<Empresa> save(@RequestBody @Valid EmpresaRequest request) throws MessagingException {
 
         Empresa empresa = request.build();
 
