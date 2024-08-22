@@ -2,6 +2,7 @@ package br.com.ifpe.matafome_api.modelo.cliente;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,6 +96,28 @@ public class ClienteService {
     }
 
     /*Funções de endereços de cliente */
+
+    @Transactional
+    public HashMap<String, Object> obterTodosEnderecosCliente(Long idCliente){
+
+        Cliente cliente = this.obterPorID(idCliente);
+
+        HashMap<String, Object> enderecosPlusId = new HashMap<>();
+
+        List<Endereco_cliente> listaEndereco_cliente = cliente.getEnderecos();
+
+        if (listaEndereco_cliente == null) {
+
+            listaEndereco_cliente = new ArrayList<>();
+
+        }
+
+        enderecosPlusId.put("idCliente", idCliente);
+        enderecosPlusId.put("enderecos", listaEndereco_cliente);
+
+        return enderecosPlusId;
+
+    }
   
 
     @Transactional
@@ -154,6 +177,29 @@ public class ClienteService {
     }
 
     /*Funções de formas de pagamentos */
+
+    @Transactional
+    public HashMap<String, Object> obterTodasFormasPagCliente(Long idCliente){
+
+        Cliente cliente = this.obterPorID(idCliente);
+
+        HashMap<String, Object> PagPlusId = new HashMap<>();
+
+        List<Forma_pagamento> listaPag_cliente = cliente.getForma_pagamento();
+
+        if (listaPag_cliente == null) {
+
+            listaPag_cliente = new ArrayList<>();
+
+        }
+
+        PagPlusId.put("idCliente", idCliente);
+        PagPlusId.put("pagtos", listaPag_cliente);
+
+        return PagPlusId;
+
+    }
+
     @Transactional
     public Forma_pagamento adicionarForma_pagamento(Long clienteId, Forma_pagamento forma_pagamento) {
  
