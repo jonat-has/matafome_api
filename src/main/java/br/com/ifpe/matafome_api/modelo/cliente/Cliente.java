@@ -37,6 +37,7 @@ public class Cliente extends EntidadeAuditavel {
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private Usuario usuario;
 
     @Column(nullable = false, length = 100)

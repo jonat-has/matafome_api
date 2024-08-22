@@ -3,6 +3,7 @@ package br.com.ifpe.matafome_api.api.acesso;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
+import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
+import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
+import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
+import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtService;
 
 
@@ -25,7 +30,14 @@ public class AuthenticationController {
 
     private final JwtService jwtService;
     
+    @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private ClienteService clienteService;
+
+    @Autowired
+    private EmpresaService empresaService;
 
 
     public AuthenticationController(JwtService jwtService, UsuarioService usuarioService) {
@@ -43,12 +55,25 @@ public class AuthenticationController {
 
         Map<Object, Object> loginResponse = new HashMap<>();
         loginResponse.put("username", authenticatedUser.getUsername());
-        loginResponse.put("idUser", authenticatedUser.getId() );
         loginResponse.put("token", jwtToken);
         loginResponse.put("tokenExpiresIn", jwtService.getExpirationTime());
 
+        // Verifica a role do usuário
+        if (authenticatedUser.getRoles().contains(Usuario.ROLE_CLIENTE)) {
+
+            Cliente cliente = clienteService.findByUsuarioUsername(authenticatedUser.getUsername());
+            loginResponse.put("ClienteData", cliente);
+
+        } else if (authenticatedUser.getRoles().contains(Usuario.ROLE_EMPRESA_USER)) {
+
+            Empresa empresa = empresaService.findByUsuarioUsername(authenticatedUser.getUsername());
+            loginResponse.put("EmpresaData", empresa);
+
+        }
+         
+
         return loginResponse;
-    }    
+    }  
 
  @GetMapping("/validar/{idUser}")
     public ResponseEntity<String> validarEmail(@PathVariable Long idUser) {

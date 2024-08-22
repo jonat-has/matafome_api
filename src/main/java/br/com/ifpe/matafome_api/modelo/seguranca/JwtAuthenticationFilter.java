@@ -2,6 +2,7 @@ package br.com.ifpe.matafome_api.modelo.seguranca;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,8 +22,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    @Autowired
     private final HandlerExceptionResolver handlerExceptionResolver;
+
+    @Autowired
     private final JwtService jwtService;
+
+    @Autowired
     private final UserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,

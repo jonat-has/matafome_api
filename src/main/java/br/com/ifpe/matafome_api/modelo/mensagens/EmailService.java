@@ -56,6 +56,7 @@ public class EmailService {
         Context params = new Context();
         params.setVariable("codigo", cliente.getUsuario().getActiveCode());
         params.setVariable("cliente", cliente);
+        params.setVariable("idUser", cliente.getUsuario().getId());
         
 
         this.sendMailTemplate("bem_vindo_cliente.html", cliente.getUsuario().getUsername(), assuntoEmail, params);

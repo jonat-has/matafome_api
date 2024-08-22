@@ -1,6 +1,7 @@
 package br.com.ifpe.matafome_api.api.empresa;
 
 import java.time.LocalTime;
+import java.util.Arrays;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
@@ -87,6 +88,7 @@ public class EmpresaRequest {
         return Usuario.builder()
             .username(email)
             .password(password)
+            .roles(Arrays.asList(Usuario.ROLE_EMPRESA_USER))
             .build();
 	}
 

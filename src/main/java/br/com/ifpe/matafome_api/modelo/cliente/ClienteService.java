@@ -257,5 +257,8 @@ public class ClienteService {
         repository.save(cliente);
     }
 
-
+    public Cliente findByUsuarioUsername(String username) {
+        return repository.findByUsuarioUsername(username)
+            .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
+    }
 }

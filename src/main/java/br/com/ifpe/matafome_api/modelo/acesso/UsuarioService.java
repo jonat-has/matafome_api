@@ -93,4 +93,10 @@ public class UsuarioService implements UserDetailsService {
         return user.getEmailvalidado();
     }
 
+    public void encontrarDadosUser(Long idUser) {
+
+        
+
+    }
+
 }

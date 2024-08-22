@@ -42,6 +42,7 @@ public class Empresa extends EntidadeAuditavel  {
   
       @ManyToOne
       @JoinColumn(nullable = false)
+      @JsonIgnore
       private Usuario usuario;
 
       @Column

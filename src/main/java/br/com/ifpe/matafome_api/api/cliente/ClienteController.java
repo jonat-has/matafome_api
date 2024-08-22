@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,7 +76,7 @@ public class ClienteController {
        description = "Endpoint responsável por editar um cliente com base no ID fornecido."
    )
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
 
 	    clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
@@ -126,7 +126,7 @@ public class ClienteController {
        description = "Endpoint responsável por editar uma entidade de tipo 'Endereco_cliente' a partir do ID fornecido."
    )
 
-   @PutMapping("/endereco/{enderecoId}")
+   @PatchMapping("/endereco/{enderecoId}")
    public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable("enderecoId") Long enderecoId, @RequestBody Endereco_clienteRequest request) {
 
        Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, request.build());
@@ -176,7 +176,7 @@ public class ClienteController {
        description = "Endpoint responsável por editar uma entidade de tipo 'Forma_pagamento' a partir do ID fornecido."
    )
 
-   @PutMapping("/formasDePagamento/{formaId}")
+   @PatchMapping("/formasDePagamento/{formaId}")
    public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable("formaId") Long formaId, @RequestBody Forma_pagamentoRequest request) {
 
     Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, request.build());

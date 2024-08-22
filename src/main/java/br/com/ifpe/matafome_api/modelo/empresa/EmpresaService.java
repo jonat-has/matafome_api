@@ -175,4 +175,9 @@ public class EmpresaService {
             .build();
 }
 
+ public Empresa findByUsuarioUsername(String username) {
+        return repository.findByUsuarioUsername(username)
+            .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
+    }
+
 }
