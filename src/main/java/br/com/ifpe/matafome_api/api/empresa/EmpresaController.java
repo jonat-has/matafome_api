@@ -3,6 +3,7 @@ package br.com.ifpe.matafome_api.api.empresa;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
@@ -113,6 +115,31 @@ public class EmpresaController {
 
         Endereco_empresa enderecoAtualizado = empresaService.atualizarEndereco_empresa(idEmpresa, request);
         return ResponseEntity.ok(enderecoAtualizado);
+    }
+
+     @GetMapping("/buscarPorNomeFantasia")
+    public ResponseEntity<Page<Empresa>> buscarPorNomeFantasia(
+            @RequestParam String nome_fantasia,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(empresaService.buscarPorNomeFantasia(nome_fantasia, page, size));
+    }
+
+    @GetMapping("/buscarPorCategoria")
+    public ResponseEntity<Page<Empresa>> buscarPorCategoria(
+            @RequestParam String categoria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(empresaService.buscarPorCategoria(categoria, page, size));
+    }
+
+    @GetMapping("/buscarPorNomeFantasiaECategoria")
+    public ResponseEntity<Page<Empresa>> buscarPorNomeFantasiaECategoria(
+            @RequestParam String nome_fantasia,
+            @RequestParam String categoria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(empresaService.buscarPorNomeFantasiaECategoria(nome_fantasia, categoria, page, size));
     }
 
    

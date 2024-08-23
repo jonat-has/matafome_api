@@ -71,7 +71,7 @@ public class ProdutoService {
         produto.setNome(produtoAlterado.getNome());
         produto.setPreco(produtoAlterado.getPreco());
         produto.setDescricao(produtoAlterado.getDescricao());
-        produto.setUrl_imagem(produtoAlterado.getUrl_imagem());
+        produto.setUrlImagem(produtoAlterado.getUrlImagem());
         return produtoRepository.save(produto);
     }
 

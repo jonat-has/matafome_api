@@ -31,7 +31,7 @@ public class ProdutoRequest {
             .nome(this.nome)
             .preco(this.preco)
             .descricao(this.descricao)
-            .url_imagem(this.imagem)
+            .urlImagem(this.imagem)
             .build();
 
         return produto;

@@ -56,7 +56,7 @@ public class PrateleiraService {
     @Transactional
     public void update(Long id, Prateleira prateleiraAlterada) {
         Prateleira prateleira = repository.findById(id).get();
-        prateleira.setNome_prateleira(prateleiraAlterada.getNome_prateleira());
+        prateleira.setNomePrateleira(prateleiraAlterada.getNomePrateleira());
         prateleira.setVersao(prateleira.getVersao() + 1);
         repository.save(prateleira);
     }

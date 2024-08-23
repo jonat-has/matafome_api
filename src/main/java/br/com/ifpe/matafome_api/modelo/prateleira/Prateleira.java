@@ -39,7 +39,7 @@ public class Prateleira extends EntidadeAuditavel {
     private Empresa empresa;
 
     @Column
-    private String nome_prateleira;
+    private String nomePrateleira;
 
     @OneToMany(mappedBy = "prateleira", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)

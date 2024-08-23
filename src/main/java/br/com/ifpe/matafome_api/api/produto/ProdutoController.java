@@ -19,7 +19,7 @@ import br.com.ifpe.matafome_api.modelo.produto.ProdutoService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/empresa/{empresaId}/prateleira/{prateleiraId}/produto")
+@RequestMapping("/api/empresas/{empresaId}/prateleiras/{prateleiraId}/produtos")
 public class ProdutoController {
 
     @Autowired

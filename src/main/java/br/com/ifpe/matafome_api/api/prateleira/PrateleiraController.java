@@ -18,7 +18,7 @@ import br.com.ifpe.matafome_api.modelo.prateleira.PrateleiraService;
 
 
 @RestController
-@RequestMapping("/api/empresa/{empresaId}/prateleira")
+@RequestMapping("/api/empresas/{empresaId}/prateleiras")
 public class PrateleiraController {
 
     @Autowired

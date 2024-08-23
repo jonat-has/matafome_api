@@ -17,7 +17,7 @@ public class PrateleiraRequest {
     public Prateleira build() {
 
         return Prateleira.builder()
-                .nome_prateleira(nome_prateleira)
+                .nomePrateleira(nome_prateleira)
                 .build();
     }
 }

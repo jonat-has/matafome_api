@@ -9,6 +9,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.ifpe.matafome_api.api.empresa.AtualizacaoEmpresaRequest;
@@ -162,7 +165,7 @@ public class EmpresaService {
 
     return Empresa_enderecoResponse.builder()
             .id(empresa.getId())
-            .razao_social(empresa.getRazao_social())
+            .razao_social(empresa.getRazaoSocial())
             .endereco(Empresa_enderecoResponse.EnderecoResponse.builder()
                     .cep(endereco.getCep())
                     .logradouro(endereco.getLogradouro())
@@ -178,6 +181,22 @@ public class EmpresaService {
  public Empresa findByUsuarioUsername(String username) {
         return repository.findByUsuarioUsername(username)
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
+    }
+
+    public Page<Empresa> buscarPorNomeFantasia(String nomeFantasia, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findByNomeFantasiaContainingIgnoreCase(nomeFantasia, pageable);
+    }
+
+    public Page<Empresa> buscarPorCategoria(String categoria, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findByCategoriaIgnoreCase(categoria, pageable);
+    }
+
+    public Page<Empresa> buscarPorNomeFantasiaECategoria(String nomeFantasia, String categoria, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(
+                nomeFantasia, categoria, pageable);
     }
 
 }
