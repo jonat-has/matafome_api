@@ -1,7 +1,9 @@
 package br.com.ifpe.matafome_api.modelo.empresa;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import br.com.ifpe.matafome_api.api.empresa.AtualizacaoEnderecoRequest;
 import br.com.ifpe.matafome_api.api.empresa.Empresa_enderecoResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
+import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -197,6 +200,28 @@ public class EmpresaService {
         Pageable pageable = PageRequest.of(page, size);
         return repository.findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(
                 nomeFantasia, categoria, pageable);
+    }
+
+@Transactional
+    public HashMap<String, Object> obterTodasPrateleirasEmpresa(Long idEmpresa){
+
+        Empresa empresa = this.obterPorID(idEmpresa);
+
+        HashMap<String, Object> prateleiras = new HashMap<>();
+
+        List<Prateleira> listaPrateleiras_empresa = empresa.getPrateleira();
+
+        if (listaPrateleiras_empresa == null) {
+
+            listaPrateleiras_empresa = new ArrayList<>();
+
+        }
+
+        prateleiras.put("idEmpresa", idEmpresa);
+        prateleiras.put("prateleiras", listaPrateleiras_empresa);
+        
+        return prateleiras;
+
     }
 
 }

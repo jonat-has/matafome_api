@@ -25,8 +25,10 @@ public class PrateleiraController {
     private PrateleiraService prateleiraService;
 
     @PostMapping
-    public ResponseEntity<Prateleira> criarPrateleira(@RequestBody Prateleira prateleira, @PathVariable Long empresaId) {
-        Prateleira prateleiraCriada = prateleiraService.save(prateleira, empresaId);
+    public ResponseEntity<Prateleira> criarPrateleira(@RequestBody PrateleiraRequest prateleiraRequest, @PathVariable Long empresaId) {
+
+        System.out.println(prateleiraRequest);
+        Prateleira prateleiraCriada = prateleiraService.save(prateleiraRequest.build(), empresaId);
         return ResponseEntity.ok(prateleiraCriada);
     }
 

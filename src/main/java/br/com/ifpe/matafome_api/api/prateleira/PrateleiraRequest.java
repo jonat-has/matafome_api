@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PrateleiraRequest {
 
-    private String nome_prateleira;
+    private String nomePrateleira;
 
     public Prateleira build() {
 
         return Prateleira.builder()
-                .nomePrateleira(nome_prateleira)
+                .nomePrateleira(nomePrateleira)
                 .build();
     }
 }

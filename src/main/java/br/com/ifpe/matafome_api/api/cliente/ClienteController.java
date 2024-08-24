@@ -45,8 +45,7 @@ public class ClienteController {
    )
     @PostMapping
     public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) throws MessagingException {
-
-        System.out.println(clienteRequest.toString());
+    
         Cliente cliente = clienteService.save(clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
         return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
 
