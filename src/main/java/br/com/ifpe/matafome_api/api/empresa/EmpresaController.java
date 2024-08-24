@@ -124,7 +124,7 @@ public class EmpresaController {
        description = "Endpoint responsável por trazer objetos de tipo 'Empresa' e 'Prateleira' registrados a patir do ID fornecido da empresa. A chave 'idempresa' contém o ID da empresa e a chave 'prateleiras' contém todas as prateleiras de uma empresa."
    )
    
-   @GetMapping("/prateleiras/{empresaId}")
+   @GetMapping("/{empresaId}/prateleiras")
    public HashMap<String, Object> obter_TodasPrateleiras_Empresa(@PathVariable("empresaId") Long empresaId) {
 
        return empresaService.obterTodasPrateleirasEmpresa(empresaId);

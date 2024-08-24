@@ -1,9 +1,12 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,8 +59,9 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public List<Produto> listarTodos() {
-        return produtoRepository.findAll();
+    public Page<Produto> findAllProdutos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return produtoRepository.findAll(pageable);
     }
 
     public Produto obterPorID(Long id) {
@@ -79,5 +83,15 @@ public class ProdutoService {
     public void delete(Long id) {
         Produto produto = obterPorID(id);
         produtoRepository.delete(produto);
+    }
+
+    public Page<Produto> buscarPorNome(String nome, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return produtoRepository.findByNome(nome, pageable);
+    }
+
+    public Page<Produto> buscarPorNomeEPrateleira(String nome, String nomePrateleira, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return produtoRepository.findByNomeAndPrateleira(nome, nomePrateleira, pageable);
     }
 }

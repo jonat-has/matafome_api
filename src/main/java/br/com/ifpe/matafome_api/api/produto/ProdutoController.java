@@ -1,8 +1,8 @@
 package br.com.ifpe.matafome_api.api.produto;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifpe.matafome_api.modelo.produto.Produto;
@@ -26,9 +27,10 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<List<Produto>> listarTodosProdutos() {
-        List<Produto> produtos = produtoService.listarTodos();
-        return ResponseEntity.ok(produtos);
+    public Page<Produto> findAllProdutos(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        return produtoService.findAllProdutos(page, size);
     }
 
     @GetMapping("/{id}")
@@ -62,4 +64,22 @@ public class ProdutoController {
         Produto produtoAtualizado = produtoService.atualizarPrateleira(produtoId, novaPrateleiraId);
         return ResponseEntity.ok(produtoAtualizado);
     }
+
+        @GetMapping("/buscar")
+    public Page<Produto> buscarPorNome(
+            @RequestParam("nome") String nome,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return produtoService.buscarPorNome(nome,  page, size);
+    }
+
+    // Endpoint para buscar por nome e prateleira com paginação
+    @GetMapping("/buscarPorNomeEPrateleira")
+    public Page<Produto> buscarPorNomeEPrateleira(
+            @RequestParam("nome") String nome,
+            @RequestParam("nomePrateleira") String nomePrateleira,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+                return produtoService.buscarPorNomeEPrateleira(nome, nomePrateleira, page, size);
+            }
 }

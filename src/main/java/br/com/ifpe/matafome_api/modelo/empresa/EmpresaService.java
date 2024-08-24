@@ -198,8 +198,7 @@ public class EmpresaService {
 
     public Page<Empresa> buscarPorNomeFantasiaECategoria(String nomeFantasia, String categoria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(
-                nomeFantasia, categoria, pageable);
+        return repository.findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(nomeFantasia, categoria, pageable);
     }
 
 @Transactional

@@ -1,6 +1,5 @@
 package br.com.ifpe.matafome_api.api.prateleira;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +31,12 @@ public class PrateleiraController {
         return ResponseEntity.ok(prateleiraCriada);
     }
 
-    @GetMapping
+   /* @GetMapping
     public ResponseEntity<List<Prateleira>> listarTodos() {
         List<Prateleira> prateleiras = prateleiraService.listarTodos();
         
         return ResponseEntity.ok(prateleiras);
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<Prateleira> obterPorID(@PathVariable Long id) {
