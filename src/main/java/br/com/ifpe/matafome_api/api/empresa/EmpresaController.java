@@ -1,5 +1,6 @@
 package br.com.ifpe.matafome_api.api.empresa;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,19 @@ public class EmpresaController {
         Endereco_empresa enderecoAtualizado = empresaService.atualizarEndereco_empresa(idEmpresa, request);
         return ResponseEntity.ok(enderecoAtualizado);
     }
+
+    
+   @Operation(
+       summary = "Serviço responsável por trazer todos as prateleiras de uma empresa.",
+       description = "Endpoint responsável por trazer objetos de tipo 'Empresa' e 'Prateleira' registrados a patir do ID fornecido da empresa. A chave 'idempresa' contém o ID da empresa e a chave 'prateleiras' contém todas as prateleiras de uma empresa."
+   )
+   
+   @GetMapping("/prateleiras/{empresaId}")
+   public HashMap<String, Object> obter_TodasPrateleiras_Empresa(@PathVariable("empresaId") Long empresaId) {
+
+       return empresaService.obterTodasPrateleirasEmpresa(empresaId);
+       
+   }
 
    
 }
