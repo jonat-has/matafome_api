@@ -38,15 +38,12 @@ public class PedidoService {
     @Autowired
     private Forma_pagamentoRepository formaPagamentoRepository;
 
-   // @Autowired
-   // private Status_pedidoRepository statusPedidoRepository;
 
     @Autowired
     private ProdutoRepository produtoRepository;
 
     @Transactional
     public Pedido save(PedidoRequest pedidoRequest) {
-
         Cliente cliente = clienteRepository.findById(pedidoRequest.getClienteId())
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
@@ -56,33 +53,108 @@ public class PedidoService {
         Endereco_cliente enderecoEntrega = enderecoClienteRepository.findById(pedidoRequest.getEnderecoEntregaId())
             .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
 
-        Forma_pagamento formaPagamento = formaPagamentoRepository.findById(pedidoRequest.getFormaPagamentoId())
+        Forma_pagamento formaPagamento = formaPagamentoRepository.findById((long) 1)
             .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
-
-       /*  Status_pedido statusPedido = statusPedidoRepository.findById(pedidoRequest.getStatusId())
-            .orElseThrow(() -> new RuntimeException("Status padrão não encontrado"));*/
 
         Pedido pedido = Pedido.builder()
                 .cliente(cliente)
                 .empresa(empresa)
                 .enderecoEntrega(enderecoEntrega)
                 .formaPagamento(formaPagamento)
-               /*  .statusPedido(statusPedido)*/
+                .status(StatusPedidoEnum.PENDENTE)
                 .statusPagamento(pedidoRequest.getStatusPagamento())
                 .taxaEntrega(pedidoRequest.getTaxaEntrega())
                 .dataHoraPedido(LocalDateTime.now())
                 .build();
+                List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
+                    return Itens_pedido.builder()
+                            .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
+                            .pedido(pedido)
+                            .quantidade(item.getQuantidade())
+                            .build();
+                }).collect(Collectors.toList());
+
+        pedido.setItensPedido(itensPedido);
+
+        // Calcular o valor total do pedido
+        calcularValorTotal(pedido);
+
+        return pedidoRepository.save(pedido);
+    }
+
+    public Pedido findById(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+    }
+    
+    public List<Pedido> findAll() {
+        return pedidoRepository.findAll();
+    }
+
+    @Transactional
+    public Pedido update(Long id, PedidoRequest pedidoRequest) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        Cliente cliente = clienteRepository.findById(pedidoRequest.getClienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        Empresa empresa = empresaRepository.findById(pedidoRequest.getEmpresaId())
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+        Endereco_cliente enderecoEntrega = enderecoClienteRepository.findById(pedidoRequest.getEnderecoEntregaId())
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+        Forma_pagamento formaPagamento = formaPagamentoRepository.findById(pedidoRequest.getFormaPagamentoId())
+                .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
+
+        pedido.setCliente(cliente);
+        pedido.setEmpresa(empresa);
+        pedido.setEnderecoEntrega(enderecoEntrega);
+        pedido.setFormaPagamento(formaPagamento);
+        pedido.setStatusPagamento(pedidoRequest.getStatusPagamento());
+        pedido.setTaxaEntrega(pedidoRequest.getTaxaEntrega());
 
         List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
             return Itens_pedido.builder()
                     .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
                     .pedido(pedido)
                     .quantidade(item.getQuantidade())
-                    .valor(item.getValor())
                     .build();
         }).collect(Collectors.toList());
 
         pedido.setItensPedido(itensPedido);
+
+        // Calcular o valor total do pedido
+        calcularValorTotal(pedido);
+
         return pedidoRepository.save(pedido);
+    }
+
+
+    @Transactional
+    public void delete(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        pedidoRepository.delete(pedido);
+    }
+
+    @Transactional
+    public Pedido alterarStatus(Long pedidoId, StatusPedidoEnum novoStatus) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+            .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        
+        // Aplicar regras de negócios para transições de status se necessário
+        pedido.setStatus(novoStatus);
+        return pedidoRepository.save(pedido);
+    }
+
+    private void calcularValorTotal(Pedido pedido) {
+        if (pedido.getItensPedido() != null) {
+            Double valorTotal = pedido.getItensPedido().stream()
+                .mapToDouble(item -> item.getProduto().getPreco() * item.getQuantidade())
+                .sum();
+            pedido.setValorTotal(valorTotal);
+        } else {
+            pedido.setValorTotal(0.0);
+        }
     }
 }

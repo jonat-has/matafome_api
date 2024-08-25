@@ -36,7 +36,7 @@ public class Produto extends EntidadeAuditavel {
     private String nome;
 
     @Column
-    private Double preco;
+    private Float preco;
 
     @Column
     private String descricao;

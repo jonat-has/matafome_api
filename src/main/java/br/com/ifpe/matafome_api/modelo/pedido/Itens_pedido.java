@@ -39,8 +39,5 @@ public class Itens_pedido extends EntidadeAuditavel {
     @Column
     private Integer quantidade;
 
-    @Column
-    private Float valor;
-
 
 }

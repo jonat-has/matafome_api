@@ -19,7 +19,7 @@ public class ProdutoRequest {
 
     private String nome;
 
-    private Double preco;
+    private Float preco;
 
     private String descricao;
 

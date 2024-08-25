@@ -76,7 +76,7 @@ public class ClienteController {
    )
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
 
 	    clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
 	    return ResponseEntity.ok().build();
@@ -86,7 +86,6 @@ public class ClienteController {
        summary = "Serviço responsável por deletar um cliente no sistema.",
        description = "Endpoint responsável por deletar um cliente com base no ID fornecido."
    )
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
@@ -100,9 +99,8 @@ public class ClienteController {
        summary = "Serviço responsável por trazer todos os endereços de um cliente.",
        description = "Endpoint responsável por enviar objetos de tipo 'Cliente' e 'Endereco_cliente' registrados a patir do ID fornecido. A chave 'idCliente' contém o ID do cliente e a chave 'enderecos' contém todos os endereços do cliente."
    )
-
-   @GetMapping("/endereco/{clienteId}")
-   public HashMap<String, Object> obter_todos_osEnderecos(@PathVariable("clienteId") Long clienteId) {
+   @GetMapping("/{clienteId}/enderecos")
+   public HashMap<String, Object> obter_todos_osEnderecos(@PathVariable Long clienteId) {
 
        return clienteService.obterTodosEnderecosCliente(clienteId);
        
@@ -112,10 +110,10 @@ public class ClienteController {
        summary = "Serviço responsável por incluir todos os endereços de um cliente.",
        description = "Endpoint responsável por criar uma entidade de tipo 'Endereco_cliente' a partir do ID fornecido."
    )
-
-   @PostMapping("/endereco/{clienteId}")
-   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable("clienteId") Long clienteId, @RequestBody @Valid Endereco_clienteRequest request) {
-
+   @PostMapping("/{clienteId}/enderecos")
+   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable Long clienteId, @RequestBody @Valid Endereco_clienteRequest request) {
+       System.out.println(clienteId);
+       System.out.println(request);
        Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, request.build());
        return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.CREATED);
    }
@@ -125,8 +123,8 @@ public class ClienteController {
        description = "Endpoint responsável por editar uma entidade de tipo 'Endereco_cliente' a partir do ID fornecido."
    )
 
-   @PatchMapping("/endereco/{enderecoId}")
-   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable("enderecoId") Long enderecoId, @RequestBody Endereco_clienteRequest request) {
+   @PatchMapping("/{enderecoId}/enderecos")
+   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable Long enderecoId, @RequestBody Endereco_clienteRequest request) {
 
        Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, request.build());
        return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.OK);
@@ -137,8 +135,8 @@ public class ClienteController {
        description = "Endpoint responsável por deletar uma entidade de tipo 'Endereco_cliente' a partir do ID fornecido."
    )
   
-   @DeleteMapping("/endereco/{enderecoId}")
-   public ResponseEntity<Void> removerEndereco_cliente(@PathVariable("enderecoId") Long enderecoId) {
+   @DeleteMapping("/{enderecoId}/enderecos")
+   public ResponseEntity<Void> removerEndereco_cliente(@PathVariable Long enderecoId) {
 
        clienteService.removerEndereco_cliente(enderecoId);
        return ResponseEntity.noContent().build();
@@ -151,8 +149,8 @@ public class ClienteController {
        description = "Endpoint responsável por trazer objetos de tipo 'Cliente' e 'Forma_pagamento' registrados a patir do ID fornecido. A chave 'idCliente' contém o ID do cliente e a chave 'pagtos' contém todos as formas de pagamento do cliente."
    )
    
-   @GetMapping("/formasDePagamento/{clienteId}")
-   public HashMap<String, Object> obter_todas_FormasPag(@PathVariable("clienteId") Long clienteId) {
+   @GetMapping("/{clienteId}/formasDePagamentos")
+   public HashMap<String, Object> obter_todas_FormasPag(@PathVariable Long clienteId) {
 
        return clienteService.obterTodasFormasPagCliente(clienteId);
        
@@ -162,9 +160,8 @@ public class ClienteController {
        summary = "Serviço responsável por incluir todas as formas de pagamento de um cliente.",
        description = "Endpoint responsável por inserir uma entidade de tipo 'Forma_pagamento' a partir do ID fornecido."
    )
-
-   @PostMapping("/formasDePagamento/{clienteId}")
-   public ResponseEntity<Forma_pagamento> adicionarFormaPagamento(@PathVariable("clienteId") Long clienteId, @RequestBody @Valid Forma_pagamentoRequest request) {
+   @PostMapping("/{clienteId}/formasDePagamentos")
+   public ResponseEntity<Forma_pagamento> adicionarFormaPagamento(@PathVariable Long clienteId, @RequestBody @Valid Forma_pagamentoRequest request) {
 
     Forma_pagamento formasDePagamento = clienteService.adicionarForma_pagamento(clienteId, request.build());
        return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.CREATED);
@@ -174,8 +171,7 @@ public class ClienteController {
        summary = "Serviço responsável por editar todas as formas de pagamento de um cliente.",
        description = "Endpoint responsável por editar uma entidade de tipo 'Forma_pagamento' a partir do ID fornecido."
    )
-
-   @PatchMapping("/formasDePagamento/{formaId}")
+   @PatchMapping("/formasDePagamentos/{formaId}")
    public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable("formaId") Long formaId, @RequestBody Forma_pagamentoRequest request) {
 
     Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, request.build());
@@ -187,7 +183,7 @@ public class ClienteController {
        description = "Endpoint responsável por deletar uma entidade de tipo 'Forma_pagamento' a partir do ID fornecido."
    )
   
-   @DeleteMapping("/formasDePagamento/{formaId}")
+   @DeleteMapping("/formasDePagamentos/{formaId}")
    public ResponseEntity<Void> removerFormaPagamento(@PathVariable("formaId") Long formaId) {
 
        clienteService.removerForma_pagamento(formaId);

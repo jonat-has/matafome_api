@@ -27,7 +27,7 @@ public class PedidoRequest {
 
     private String statusPagamento;
 
-    private Double taxaEntrega;
+    private Float taxaEntrega;
 
     @Getter
     @Setter
@@ -39,6 +39,5 @@ public class PedidoRequest {
 
         private Integer quantidade;
         
-        private Float valor;
     }
 }

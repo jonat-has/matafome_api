@@ -57,7 +57,13 @@ public class EmpresaService {
         empresa.setDataCriacao(LocalDate.now());
         Empresa empresaSalvo = repository.save(empresa);
 
-        emailService.enviarEmailConfirmacaoCadastroEmpresa(empresaSalvo);
+        new Thread(() -> {
+            try {
+                emailService.enviarEmailConfirmacaoCadastroEmpresa(empresaSalvo);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }).start();
  
         return empresaSalvo;
  

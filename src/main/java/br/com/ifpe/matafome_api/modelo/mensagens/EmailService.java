@@ -49,6 +49,7 @@ public class EmailService {
 
     private JavaMailSender emailSender;
 
+    @Async
     public void enviarEmailConfirmacaoCadastroCliente(Cliente cliente) throws MessagingException {
 
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
@@ -62,6 +63,7 @@ public class EmailService {
         this.sendMailTemplate("bem_vindo_cliente.html", cliente.getUsuario().getUsername(), assuntoEmail, params);
     }
 
+    @Async
     public void enviarEmailConfirmacaoCadastroEmpresa(Empresa empresa) throws MessagingException {
 
         String assuntoEmail = "Bem vindo ao nosso aplicativo";

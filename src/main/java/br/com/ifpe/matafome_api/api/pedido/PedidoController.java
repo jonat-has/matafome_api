@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.modelo.pedido.PedidoService;
+import br.com.ifpe.matafome_api.modelo.pedido.StatusPedidoEnum;
 
 
 
@@ -21,5 +22,11 @@ public class PedidoController {
     public ResponseEntity<Pedido> criarPedido(@RequestBody PedidoRequest pedidoRequest) {
         Pedido pedido = pedidoService.save(pedidoRequest);
         return ResponseEntity.ok(pedido);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedidoEnum novoStatus) {
+        Pedido pedidoAtualizado = pedidoService.alterarStatus(id, novoStatus);
+        return ResponseEntity.ok(pedidoAtualizado);
     }
 }

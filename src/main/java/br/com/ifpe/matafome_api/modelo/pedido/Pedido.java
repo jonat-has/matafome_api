@@ -12,6 +12,8 @@ import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -47,8 +49,10 @@ public class Pedido extends EntidadeAuditavel {
     @OneToMany(mappedBy = "pedido")
     private List<Itens_pedido> itensPedido;
 
-    @ManyToOne
-    private Status_pedido statusPedido;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusPedidoEnum status;
 
     @Column
     private LocalDateTime dataHoraPedido;
@@ -57,7 +61,7 @@ public class Pedido extends EntidadeAuditavel {
     private String statusPagamento;
 
     @Column
-    private Double taxaEntrega;
+    private Float taxaEntrega;
 
     @Column
     private Double valorTotal;

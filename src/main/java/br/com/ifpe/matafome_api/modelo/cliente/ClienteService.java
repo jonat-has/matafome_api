@@ -47,8 +47,15 @@ public class ClienteService {
         cliente.setDataCriacao(LocalDate.now());
         cliente.setCriadoPor(usuarioLogado);
         Cliente clienteSalvo = repository.save(cliente);
-
-        emailService.enviarEmailConfirmacaoCadastroCliente(clienteSalvo);
+        
+        new Thread(() -> {
+            try {
+                emailService.enviarEmailConfirmacaoCadastroCliente(clienteSalvo);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }).start();
+ 
  
         return clienteSalvo;
  
