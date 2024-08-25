@@ -1,6 +1,9 @@
 package br.com.ifpe.matafome_api.api.pedido;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +31,29 @@ public class PedidoController {
     public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedidoEnum novoStatus) {
         Pedido pedidoAtualizado = pedidoService.alterarStatus(id, novoStatus);
         return ResponseEntity.ok(pedidoAtualizado);
+    }
+
+     @GetMapping("/{id}")
+    public ResponseEntity<Pedido> obterPedidoPorId(@PathVariable Long id) {
+        Pedido pedido = pedidoService.findById(id);
+        return ResponseEntity.ok(pedido);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Pedido>> listarTodosPedidos() {
+        List<Pedido> pedidos = pedidoService.findAll();
+        return ResponseEntity.ok(pedidos);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody PedidoRequest pedidoRequest) {
+        Pedido pedidoAtualizado = pedidoService.update(id, pedidoRequest);
+        return ResponseEntity.ok(pedidoAtualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletarPedido(@PathVariable Long id) {
+        pedidoService.delete(id);
     }
 }
