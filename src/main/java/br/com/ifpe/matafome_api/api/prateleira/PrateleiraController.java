@@ -3,6 +3,7 @@ package br.com.ifpe.matafome_api.api.prateleira;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import br.com.ifpe.matafome_api.modelo.prateleira.PrateleiraService;
 
 @RestController
 @RequestMapping("/api/empresas/{empresaId}/prateleiras")
+@CrossOrigin
 public class PrateleiraController {
 
     @Autowired
@@ -26,7 +28,6 @@ public class PrateleiraController {
     @PostMapping
     public ResponseEntity<Prateleira> criarPrateleira(@RequestBody PrateleiraRequest prateleiraRequest, @PathVariable Long empresaId) {
 
-        System.out.println(prateleiraRequest);
         Prateleira prateleiraCriada = prateleiraService.save(prateleiraRequest.build(), empresaId);
         return ResponseEntity.ok(prateleiraCriada);
     }

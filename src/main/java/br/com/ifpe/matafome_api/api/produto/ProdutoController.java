@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/empresas/{empresaId}/prateleiras/{prateleiraId}/produtos")
+@CrossOrigin
 public class ProdutoController {
 
     @Autowired
@@ -40,7 +42,7 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<Produto> adicionarProduto(@PathVariable("prateleiraId") Long prateleiraId, @RequestBody @Valid Produto produto) {
+    public ResponseEntity<Produto> adicionarProduto(@PathVariable Long prateleiraId, @RequestBody @Valid Produto produto) {
         Produto novoProduto = produtoService.adicionarProduto(prateleiraId, produto);
         return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }

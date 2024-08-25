@@ -11,6 +11,7 @@ import br.com.ifpe.matafome_api.modelo.pedido.PedidoService;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@CrossOrigin
 public class PedidoController {
 
     @Autowired
