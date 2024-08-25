@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1 user-scalable=yes">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="x-apple-disable-message-reformatting">
+  <style>
+    @media only screen and (max-width: 600px){
+      .watermark{
+        background:#ffffff !important;
+      }
+    }
+    body {
+      background: #f9f9f9;
+      font-family: 'Open Sans', 'Tahoma', sans-serif;
+      line-height: 2.1em;
+      color: #333333;
+    }
+    .container {
+      width: 60.5em;
+      max-width: 100%;
+      background: #ffffff;
+      margin: 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      display: flex;
+      justify-content: center;
+      background: #ff6600; /* Laranja */
+      color: #ffffff;
+      padding: 1.5em;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    .separator {
+      background: #ffcc00; /* Amarelo */
+      height: 0.2em;
+    }
+    .content {
+      padding: 1.5em;
+      color: #333333;
+    }
+    .content p {
+      margin: 0 0 1em;
+    }
+    .content b {
+      color: #28a745; /* Verde */
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 0.75em 1.5em;
+      margin-top: 1em;
+      background: #28a745; /* Verde */
+      color: #ffffff;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .cta-button:hover {
+      background: #218838; /* Verde mais escuro */
+    }
+    .footer {
+      background: #ffcc00; /* Amarelo */
+      color: #333333;
+      padding: 1.5em;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 1rem;
+      font-style: italic;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container" role="article" aria-roledescription="email" lang="pt-BR" dir="ltr">
+    <!-- Header -->
+    <div class="header">
+      <table align="center" width="100%" role="presentation">
+        <tr>
+          <td style="text-align: center;">
+            <img th:src="@{https://firebasestorage.googleapis.com/v0/b/upload-image-6a82d.appspot.com/o/mata.png?alt=media&token=a4ca17b7-68db-4e95-acc7-b7324bd81f54}" alt="Logo Matafome" style="display: block; margin: 0 auto;"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Separator -->
+    <hr class="separator">
+
+    <!-- Content -->
+    <div class="content">
+      <p>Olá,</p>
+      <p>Recebemos uma solicitação para redefinir a sua senha. Se você não fez essa solicitação, por favor, ignore este e-mail.</p>
+      <p>Seu código de verificação é: <b th:text="${codigo}"></b></p>
+      <p>Para redefinir sua senha, clique no botão abaixo:</p>
+      <a th:href="@{https://matafome-api.ashyfield-34914be1.brazilsouth.azurecontainerapps.io/api/auth/resetar-senha/{token}(token=${token})}" class="cta-button">Redefinir Senha</a>
+      <p>Este link de redefinição de senha expirará em 24 horas por razões de segurança.</p>
+      <p>Se precisar de mais ajuda, entre em contato com nossa equipe de suporte.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Atenciosamente,<br> <span>equipe Matafome.</span></p>
+    </div>
+  </div>
+
+</body>
+</html>

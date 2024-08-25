@@ -66,7 +66,7 @@ public class UsuarioService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setHabilitado(Boolean.TRUE);
         user.setEmailvalidado(Boolean.FALSE);
-        user.setActiveCode(reedemCode());
+        user.setPasswordCode(reedemCode());
         return repository.save(user);
     }
 

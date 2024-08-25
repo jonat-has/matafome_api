@@ -38,8 +38,8 @@ public class PedidoService {
     @Autowired
     private Forma_pagamentoRepository formaPagamentoRepository;
 
-    @Autowired
-    private Status_pedidoRepository statusPedidoRepository;
+   // @Autowired
+   // private Status_pedidoRepository statusPedidoRepository;
 
     @Autowired
     private ProdutoRepository produtoRepository;

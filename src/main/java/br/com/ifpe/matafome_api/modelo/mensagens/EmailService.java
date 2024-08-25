@@ -54,7 +54,7 @@ public class EmailService {
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
 
         Context params = new Context();
-        params.setVariable("codigo", cliente.getUsuario().getActiveCode());
+        params.setVariable("codigo", cliente.getUsuario().getPasswordCode());
         params.setVariable("cliente", cliente);
         params.setVariable("idUser", cliente.getUsuario().getId());
         
@@ -67,7 +67,7 @@ public class EmailService {
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
         Context params = new Context();
 
-        params.setVariable("codigo", empresa.getUsuario().getActiveCode());
+        params.setVariable("codigo", empresa.getUsuario().getPasswordCode());
         params.setVariable("empresa", empresa); 
         params.setVariable("idUser", empresa.getUsuario().getId());
         

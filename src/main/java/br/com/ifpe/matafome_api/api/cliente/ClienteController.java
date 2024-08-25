@@ -53,7 +53,7 @@ public class ClienteController {
 
     @Operation(
         summary = "Serviço responsável por listar todos os clientes no sistema.",
-        description = "Endpoint responsável por listar todos os clientes no sistema."
+        description = "Endpoint responsável por listar todos os clientes no sistema."   
     )
     @GetMapping
     public List<Cliente> listarTodos() {

@@ -48,9 +48,9 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
     @Column(nullable = false)
     private Boolean emailvalidado;
 
-    @Column(nullable = false, length = 4)
+    @Column(nullable = true, length = 4)
     @JsonIgnore
-    private Integer activeCode;
+    private Integer passwordCode;
 
     @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
