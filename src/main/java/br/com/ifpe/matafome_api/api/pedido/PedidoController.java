@@ -7,9 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.modelo.pedido.PedidoService;
 import br.com.ifpe.matafome_api.modelo.pedido.StatusPedidoEnum;
+import org.springframework.web.bind.annotation.GetMapping;
+
+
 
 
 
@@ -21,6 +25,11 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
+    @GetMapping
+    public List<Pedido> findAll() {
+        return pedidoService.listarTodos();
+    }
+    
     @PostMapping
     public ResponseEntity<Pedido> criarPedido(@RequestBody PedidoRequest pedidoRequest) {
         Pedido pedido = pedidoService.save(pedidoRequest);
@@ -39,12 +48,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Pedido>> listarTodosPedidos() {
-        List<Pedido> pedidos = pedidoService.findAll();
-        return ResponseEntity.ok(pedidos);
-    }
-
     @PatchMapping("/{id}")
     public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody PedidoRequest pedidoRequest) {
         Pedido pedidoAtualizado = pedidoService.update(id, pedidoRequest);
@@ -56,4 +59,5 @@ public class PedidoController {
     public void deletarPedido(@PathVariable Long id) {
         pedidoService.delete(id);
     }
+
 }

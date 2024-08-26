@@ -1,6 +1,7 @@
 package br.com.ifpe.matafome_api.modelo.pedido;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ public class PedidoService {
 
     @Transactional
     public Pedido save(PedidoRequest pedidoRequest) {
+
         Cliente cliente = clienteRepository.findById(pedidoRequest.getClienteId())
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
@@ -74,6 +76,10 @@ public class PedidoService {
                             .build();
                 }).collect(Collectors.toList());
 
+        pedido.setHabilitado(Boolean.TRUE);
+        pedido.setVersao(1L);
+        pedido.setDataCriacao(LocalDate.now());
+
         pedido.setItensPedido(itensPedido);
 
         // Calcular o valor total do pedido
@@ -87,7 +93,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
     
-    public List<Pedido> findAll() {
+    public List<Pedido> listarTodos() {
         return pedidoRepository.findAll();
     }
 

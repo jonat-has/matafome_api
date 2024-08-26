@@ -21,10 +21,13 @@ import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
+import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -189,6 +192,12 @@ public class ClienteController {
        clienteService.removerForma_pagamento(formaId);
        return ResponseEntity.noContent().build();
    }
+
+   @GetMapping("/{idCliente}/pedidos")
+   public List<Pedido> pedidosDoCliente(@PathVariable Long idCliente) {
+       return clienteService.pedidoCliente(idCliente);
+   }
+   
 
 
 }

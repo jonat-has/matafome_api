@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.FetchMode;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,5 +58,10 @@ public class Cliente extends EntidadeAuditavel {
     @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore
     private List<Forma_pagamento> forma_pagamento;
+
+    @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @JsonIgnore
+    private List<Pedido> pedidos;
 
 }

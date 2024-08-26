@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.modelo.empresa.Endereco_empresa;
+import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -156,6 +157,11 @@ public class EmpresaController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(empresaService.buscarPorNomeFantasiaECategoria(nome_fantasia, categoria, page, size));
     }
+
+       @GetMapping("/{idEmpresa}/pedidos")
+   public List<Pedido> pedidosDaEmpresa(@PathVariable Long idEmpresa) {
+       return empresaService.pedidoEmpresa(idEmpresa);
+   }
 
    
 }
