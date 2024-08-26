@@ -26,7 +26,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    public List<Pedido> findAll() {
+    public List<PedidoResponse> findAll() {
         return pedidoService.listarTodos();
     }
     
@@ -43,8 +43,8 @@ public class PedidoController {
     }
 
      @GetMapping("/{id}")
-    public ResponseEntity<Pedido> obterPedidoPorId(@PathVariable Long id) {
-        Pedido pedido = pedidoService.findById(id);
+    public ResponseEntity<PedidoResponse> obterPedidoPorId(@PathVariable Long id) {
+        PedidoResponse pedido = pedidoService.findById(id);
         return ResponseEntity.ok(pedido);
     }
 

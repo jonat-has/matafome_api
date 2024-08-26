@@ -10,6 +10,7 @@ import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,7 +47,7 @@ public class Pedido extends EntidadeAuditavel {
     @ManyToOne
     private Forma_pagamento formaPagamento;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Itens_pedido> itensPedido;
 
 

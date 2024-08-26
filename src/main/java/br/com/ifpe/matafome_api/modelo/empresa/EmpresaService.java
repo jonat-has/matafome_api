@@ -186,12 +186,12 @@ public class EmpresaService {
                     .estado(endereco.getEstado())
                     .build())
             .build();
-}
-
- public Empresa findByUsuarioUsername(String username) {
-        return repository.findByUsuarioUsername(username)
-            .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
     }
+
+    public Empresa findByUsuarioUsername(String username) {
+            return repository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
+        }
 
     public Page<Empresa> buscarPorNomeFantasia(String nomeFantasia, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -208,7 +208,7 @@ public class EmpresaService {
         return repository.findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(nomeFantasia, categoria, pageable);
     }
 
-@Transactional
+    @Transactional
     public HashMap<String, Object> obterTodasPrateleirasEmpresa(Long idEmpresa){
 
         Empresa empresa = this.obterPorID(idEmpresa);
@@ -230,13 +230,11 @@ public class EmpresaService {
 
     }
 
-        public List<Pedido> pedidoEmpresa(Long idEmpresa) {
-        
-        Empresa empresa = repository.findById(idEmpresa).get();
-
-         List<Pedido> pedidosDaEmpresa = empresa.getPedidos();
-
-         return  pedidosDaEmpresa;
+    public List<Pedido> pedidoEmpresa(Long idEmpresa) {
+    
+    Empresa empresa = repository.findById(idEmpresa).get();
+     List<Pedido> pedidosDaEmpresa = empresa.getPedidos();
+     return  pedidosDaEmpresa;
 
 
     }

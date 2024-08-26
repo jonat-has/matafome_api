@@ -158,8 +158,8 @@ public class EmpresaController {
         return ResponseEntity.ok(empresaService.buscarPorNomeFantasiaECategoria(nome_fantasia, categoria, page, size));
     }
 
-       @GetMapping("/{idEmpresa}/pedidos")
-   public List<Pedido> pedidosDaEmpresa(@PathVariable Long idEmpresa) {
+    @GetMapping("/{idEmpresa}/pedidos")
+    public List<Pedido> pedidosDaEmpresa(@PathVariable Long idEmpresa) {
        return empresaService.pedidoEmpresa(idEmpresa);
    }
 

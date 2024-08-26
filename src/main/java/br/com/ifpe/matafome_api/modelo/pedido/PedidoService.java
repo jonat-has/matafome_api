@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.ifpe.matafome_api.api.pedido.PedidoRequest;
+import br.com.ifpe.matafome_api.api.pedido.PedidoResponse;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteRepository;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
@@ -68,13 +69,22 @@ public class PedidoService {
                 .taxaEntrega(pedidoRequest.getTaxaEntrega())
                 .dataHoraPedido(LocalDateTime.now())
                 .build();
+
                 List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
+
                     return Itens_pedido.builder()
                             .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
                             .pedido(pedido)
                             .quantidade(item.getQuantidade())
                             .build();
                 }).collect(Collectors.toList());
+            
+
+                itensPedido.forEach(item -> {
+                    item.setHabilitado(Boolean.TRUE);
+                    item.setVersao(1L);
+                    item.setDataCriacao(LocalDate.now());
+                });
 
         pedido.setHabilitado(Boolean.TRUE);
         pedido.setVersao(1L);
@@ -88,13 +98,17 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public Pedido findById(Long id) {
-        return pedidoRepository.findById(id)
+    public PedidoResponse findById(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+    
+        return buildPedidoResponse(pedido);
     }
     
-    public List<Pedido> listarTodos() {
-        return pedidoRepository.findAll();
+    public List<PedidoResponse> listarTodos() {
+        return pedidoRepository.findAll().stream()
+                .map(this::buildPedidoResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -121,11 +135,11 @@ public class PedidoService {
         List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
             return Itens_pedido.builder()
                     .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
-                    .pedido(pedido)
+                    .pedido(pedido) 
                     .quantidade(item.getQuantidade())
                     .build();
         }).collect(Collectors.toList());
-
+    
         pedido.setItensPedido(itensPedido);
 
         // Calcular o valor total do pedido
@@ -163,4 +177,69 @@ public class PedidoService {
             pedido.setValorTotal(0.0);
         }
     }
+
+    private PedidoResponse buildPedidoResponse(Pedido pedido) {
+    return PedidoResponse.builder()
+            .id(pedido.getId())
+            .cliente(PedidoResponse.ClienteResponse.builder()
+                    .id(pedido.getCliente().getId())
+                    .nome(pedido.getCliente().getNome())
+                    .foneCelular(pedido.getCliente().getFoneCelular())
+                    .cpf(pedido.getCliente().getCpf())
+                    .build())
+            .empresa(PedidoResponse.EmpresaResponse.builder()
+                    .id(pedido.getEmpresa().getId())
+                    .nomeFantasia(pedido.getEmpresa().getNomeFantasia())
+                    .horarioAbertura(pedido.getEmpresa().getHorarioAbertura())
+                    .horarioFechamento(pedido.getEmpresa().getHorarioFechamento())
+                    .tempoEntrega(pedido.getEmpresa().getTempoEntrega())
+                    .imgCapa(pedido.getEmpresa().getImgCapa())
+                    .imgPerfil(pedido.getEmpresa().getImgPerfil())
+                    .categoria(pedido.getEmpresa().getCategoria())
+                    .telefone(pedido.getEmpresa().getTelefone())
+                    .taxaFrete(pedido.getEmpresa().getTaxaFrete())
+                    .endereco(PedidoResponse.EnderecoResponse.builder()
+                            .cep(pedido.getEmpresa().getEndereco().getCep())
+                            .logradouro(pedido.getEmpresa().getEndereco().getLogradouro())
+                            .complemento(pedido.getEmpresa().getEndereco().getComplemento())
+                            .numero(pedido.getEmpresa().getEndereco().getNumero())
+                            .bairro(pedido.getEmpresa().getEndereco().getBairro())
+                            .cidade(pedido.getEmpresa().getEndereco().getCidade())
+                            .estado(pedido.getEmpresa().getEndereco().getEstado())
+                            .build())
+                    .build())
+            .enderecoEntrega(PedidoResponse.EnderecoClienteResponse.builder()
+                    .id(pedido.getEnderecoEntrega().getId())
+                    .cep(pedido.getEnderecoEntrega().getCep())
+                    .logradouro(pedido.getEnderecoEntrega().getLogradouro())
+                    .complemento(pedido.getEnderecoEntrega().getComplemento())
+                    .numero(pedido.getEnderecoEntrega().getNumero())
+                    .bairro(pedido.getEnderecoEntrega().getBairro())
+                    .cidade(pedido.getEnderecoEntrega().getCidade())
+                    .estado(pedido.getEnderecoEntrega().getEstado())
+                    .build())
+            .formaPagamento(PedidoResponse.FormaPagamentoResponse.builder()
+                    .tipo(pedido.getFormaPagamento().getTipo())
+                    .numeroCartao(pedido.getFormaPagamento().getNumero_cartao())
+                    .build())
+            .itensPedido(pedido.getItensPedido().stream()
+                    .map(item -> PedidoResponse.ItensPedidoResponse.builder()
+                            .id(item.getId())
+                            .quantidade(item.getQuantidade())
+                            .produto(PedidoResponse.ItensPedidoResponse.ProdutoResponse.builder()
+                                    .id(item.getProduto().getId())
+                                    .nome(item.getProduto().getNome())
+                                    .preco(item.getProduto().getPreco())
+                                    .descricao(item.getProduto().getDescricao())
+                                    .urlImagem(item.getProduto().getUrlImagem())
+                                    .build())
+                            .build())
+                    .collect(Collectors.toList()))
+            .status(pedido.getStatus())
+            .dataHoraPedido(pedido.getDataHoraPedido())
+            .statusPagamento(pedido.getStatusPagamento())
+            .taxaEntrega(pedido.getTaxaEntrega())
+            .valorTotal(pedido.getValorTotal())
+            .build();
+}
 }
