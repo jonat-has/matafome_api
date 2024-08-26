@@ -80,7 +80,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
+    public Cliente update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
 
         Cliente cliente = repository.findById(id).get();
         cliente.setNome(clienteAlterado.getNome());
@@ -91,6 +91,8 @@ public class ClienteService {
         cliente.setUltimaModificacaoPor(usuarioLogado);
     
         repository.save(cliente);
+
+        return cliente;
     }
 
     @Transactional
