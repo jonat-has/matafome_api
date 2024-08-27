@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -21,7 +22,6 @@ import br.com.ifpe.matafome_api.api.empresa.AtualizacaoEnderecoRequest;
 import br.com.ifpe.matafome_api.api.empresa.Empresa_enderecoResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
-import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.mail.MessagingException;
@@ -227,15 +227,6 @@ public class EmpresaService {
         prateleiras.put("prateleiras", listaPrateleiras_empresa);
         
         return prateleiras;
-
-    }
-
-    public List<Pedido> pedidoEmpresa(Long idEmpresa) {
-    
-    Empresa empresa = repository.findById(idEmpresa).get();
-     List<Pedido> pedidosDaEmpresa = empresa.getPedidos();
-     return  pedidosDaEmpresa;
-
 
     }
 

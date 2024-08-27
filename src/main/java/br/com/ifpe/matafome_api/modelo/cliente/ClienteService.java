@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
-import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.util.exception.EntidadeNaoEncontradaException;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -272,14 +271,4 @@ public class ClienteService {
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o username: " + username));
     }
 
-    public List<Pedido> pedidoCliente(Long idCliente) {
-        
-        Cliente cliente = repository.findById(idCliente).get();
-
-         List<Pedido> pedidosDoClientes = cliente.getPedidos();
-
-         return  pedidosDoClientes;
-
-
-    }
 }

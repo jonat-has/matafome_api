@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ifpe.matafome_api.api.pedido.PedidoResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
-import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
+import br.com.ifpe.matafome_api.modelo.pedido.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,6 +44,9 @@ public class ClienteController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private PedidoService pedidoService;
 
     /*ENDPOINT DE CLIENTE */
     @Operation(
@@ -300,8 +304,8 @@ public class ClienteController {
     }
     )
    @GetMapping("/{idCliente}/pedidos")
-   public List<Pedido> pedidosDoCliente(@PathVariable Long idCliente) {
-       return clienteService.pedidoCliente(idCliente);
+   public List<PedidoResponse> pedidosDoCliente(@PathVariable Long idCliente) {
+       return pedidoService.findPedidosByClienteId(idCliente);
    }
    
 

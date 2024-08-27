@@ -18,11 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ifpe.matafome_api.api.pedido.PedidoResponse;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.modelo.empresa.Endereco_empresa;
-import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
+import br.com.ifpe.matafome_api.modelo.pedido.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
@@ -34,6 +38,9 @@ public class EmpresaController {
 
     @Autowired
     private EmpresaService empresaService;
+
+    @Autowired
+    private PedidoService pedidoService;
 
     /*End point de Empresa */
     /*ENDPOINT PUBLICO */
@@ -158,9 +165,19 @@ public class EmpresaController {
         return ResponseEntity.ok(empresaService.buscarPorNomeFantasiaECategoria(nome_fantasia, categoria, page, size));
     }
 
+
+
+    @Operation(
+    summary = "Lista todos os pedidos de uma empresa.",
+    description = "Endpoint para recuperar todos os pedidos associados a uma empresa específica.",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Pedidos retornados com sucesso", content = @Content(schema = @Schema(implementation = HashMap.class))),
+        @ApiResponse(responseCode = "404", description = "Empresa não encontrado"),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @GetMapping("/{idEmpresa}/pedidos")
-    public List<Pedido> pedidosDaEmpresa(@PathVariable Long idEmpresa) {
-       return empresaService.pedidoEmpresa(idEmpresa);
+    public List<PedidoResponse> pedidosDaEmpresa(@PathVariable Long idEmpresa) {
+       return pedidoService.findPedidosByEmpresaId(idEmpresa);
    }
 
    

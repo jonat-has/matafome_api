@@ -242,4 +242,28 @@ public class PedidoService {
             .valorTotal(pedido.getValorTotal())
             .build();
 }
+
+        public List<PedidoResponse> findPedidosByEmpresaId(Long idEmpresa) {
+                Empresa empresa = empresaRepository.findById(idEmpresa)
+                        .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+        
+                List<Pedido> pedidosDaEmpresa = empresa.getPedidos();
+        
+                // Transforma a lista de Pedido em uma lista de PedidoResponse
+                return pedidosDaEmpresa.stream()
+                        .map(this::buildPedidoResponse)
+                        .collect(Collectors.toList());
+        }
+
+        public List<PedidoResponse> findPedidosByClienteId(Long idCliente) {
+                Cliente cliente = clienteRepository.findById(idCliente)
+                        .orElseThrow(() -> new RuntimeException("Cliente não encontrada"));
+        
+                List<Pedido> pedidosDoCliente = cliente.getPedidos();
+        
+                // Transforma a lista de Pedido em uma lista de PedidoResponse
+                return pedidosDoCliente.stream()
+                        .map(this::buildPedidoResponse)
+                        .collect(Collectors.toList());
+        }
 }
