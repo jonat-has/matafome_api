@@ -1,5 +1,9 @@
 package br.com.ifpe.matafome_api.modelo.acesso;
 
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.matafome_api.modelo.mensagens.EmailService;
 import br.com.ifpe.matafome_api.modelo.seguranca.JwtService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
@@ -22,6 +28,9 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     private final PasswordEncoder passwordEncoder;
@@ -56,6 +65,7 @@ public class UsuarioService implements UserDetailsService {
         return repository.findByUsername(username).get();
     }
 
+ 
 
     @Transactional
     public Usuario save(Usuario user) {
@@ -89,10 +99,42 @@ public class UsuarioService implements UserDetailsService {
         return user.getEmailvalidado();
     }
 
-    public void encontrarDadosUser(Long idUser) {
-
-        
-
+    private final Random secureRandom = new SecureRandom(); 
+    public Integer reedemCode() {
+        return secureRandom.nextInt(9000) + 1000;
     }
 
+    public String enviarCodigo(String emailUser) throws MessagingException {
+        Usuario user = findByEmail(emailUser);
+
+        // Gera e salva o código de recuperação de senha
+        Integer codigoRecuperacao = reedemCode();
+        user.setPasswordCode(codigoRecuperacao);
+
+
+        repository.save(user);
+
+        emailService.enviarEmailRecuperarSenha(user);
+
+        return "Código enviado para o email: " + emailUser;
+    }
+
+    public Boolean validarCodigo(Integer codigo, String emailUser) {
+        Usuario user = findByEmail(emailUser);
+        Integer userCodigo = user.getPasswordCode();
+
+        // Exemplo de como usar uma comparação segura
+        return userCodigo != null && MessageDigest.isEqual(userCodigo.toString().getBytes(), codigo.toString().getBytes());
+    }
+
+    public Usuario trocarSenha(String novaSenha, String emailUser) {
+
+        Usuario user = findByEmail(emailUser);
+        user.setPassword(passwordEncoder.encode(novaSenha));
+        
+        user.setPasswordCode(null);
+
+
+        return repository.save(user);
+    }
 }

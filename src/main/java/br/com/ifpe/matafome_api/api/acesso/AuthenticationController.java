@@ -75,7 +75,7 @@ public class AuthenticationController {
         return loginResponse;
     }  
 
- @GetMapping("/validar/{idUser}")
+    @GetMapping("/validar/{idUser}")
     public ResponseEntity<String> validarEmail(@PathVariable Long idUser) {
         boolean isEmailValidated = usuarioService.validarEmail(idUser);
 
@@ -86,4 +86,40 @@ public class AuthenticationController {
         }
     }
     
+    @PostMapping("/enviarCodigoDeRecuperacao")
+    public ResponseEntity<String> enviarCodigoDeRecuperacao(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+    
+        try {
+            String responseMessage = usuarioService.enviarCodigo(email);
+            return ResponseEntity.ok(responseMessage);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao enviar o código de recuperação de senha: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/validarCodigoDeRecuperação")
+    public Boolean validarCodigo(@RequestBody TrocarSenhaRequest request ) {
+        String email = request.getEmail();
+        Integer codigo = request.getCodigo();
+        
+        Boolean valido = usuarioService.validarCodigo(codigo,email);
+
+        return valido;
+    }
+    
+
+    @PostMapping("/trocarSenha")
+    public ResponseEntity<String> trocarSenha(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String novaSenha = request.get("novaSenha");
+
+        try {          
+                usuarioService.trocarSenha(novaSenha, email);
+                return ResponseEntity.ok("Senha trocada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao trocar a senha: " + e.getMessage());
+        }
+    }
+        
 }

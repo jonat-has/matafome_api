@@ -17,6 +17,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import jakarta.mail.MessagingException;
@@ -55,7 +56,7 @@ public class EmailService {
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
 
         Context params = new Context();
-        params.setVariable("codigo", cliente.getUsuario().getPasswordCode());
+
         params.setVariable("cliente", cliente);
         params.setVariable("idUser", cliente.getUsuario().getId());
         
@@ -69,12 +70,25 @@ public class EmailService {
         String assuntoEmail = "Bem vindo ao nosso aplicativo";
         Context params = new Context();
 
-        params.setVariable("codigo", empresa.getUsuario().getPasswordCode());
         params.setVariable("empresa", empresa); 
         params.setVariable("idUser", empresa.getUsuario().getId());
         
         
         this.sendMailTemplate("bem_vindo_empresa.html", empresa.getUsuario().getUsername(), assuntoEmail, params);
+    }
+
+    @Async
+    public void enviarEmailRecuperarSenha(Usuario usuario) throws MessagingException {
+
+        String assuntoEmail = "Bem vindo ao nosso aplicativo";
+        Context params = new Context();
+
+        params.setVariable("codigo", usuario.getPasswordCode());
+
+        params.setVariable("idUser", usuario.getId());
+        
+        
+        this.sendMailTemplate("recuperar_senha.html", usuario.getUsername(), assuntoEmail, params);
     }
 
 
