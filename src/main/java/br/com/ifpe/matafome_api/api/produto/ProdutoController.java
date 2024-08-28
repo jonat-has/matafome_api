@@ -1,6 +1,7 @@
 package br.com.ifpe.matafome_api.api.produto;
 
 
+import br.com.ifpe.matafome_api.modelo.produto.Adicionais;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifpe.matafome_api.modelo.produto.Produto;
 import br.com.ifpe.matafome_api.modelo.produto.ProdutoService;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/empresas/{empresaId}/prateleiras/{prateleiraId}/produtos")
@@ -82,6 +85,23 @@ public class ProdutoController {
             @RequestParam("nomePrateleira") String nomePrateleira,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-                return produtoService.buscarPorNomeEPrateleira(nome, nomePrateleira, page, size);
-            }
+        return produtoService.buscarPorNomeEPrateleira(nome, nomePrateleira, page, size);
+    }
+
+    //EndPoints para adicionais de produto
+    @PostMapping("/{produtoId}/adicionais")
+    public  ResponseEntity<Adicionais> addAdicionais(@PathVariable Long produtoId, @RequestBody @Valid AdicionaisRequest request) {
+
+          
+            Adicionais adicionais = request.build();
+     
+            produtoService.adicionarAdicionais(produtoId, adicionais);
+            return ResponseEntity.ok(adicionais);
+    }
+
+    @GetMapping("/adicionais")
+    public ResponseEntity<List<Adicionais>> getAdicionais() {
+        List<Adicionais> adicionais = produtoService.getAdicionais();
+        return ResponseEntity.ok(adicionais);
+    }
 }

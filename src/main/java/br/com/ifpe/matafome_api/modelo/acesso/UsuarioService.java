@@ -56,9 +56,6 @@ public class UsuarioService implements UserDetailsService {
         return repository.findByUsername(username).get();
     }
 
-    public Integer reedemCode() {
-        return (int) (Math.random() * 9000) + 1000;  
-    }
 
     @Transactional
     public Usuario save(Usuario user) {
@@ -66,7 +63,6 @@ public class UsuarioService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setHabilitado(Boolean.TRUE);
         user.setEmailvalidado(Boolean.FALSE);
-        user.setPasswordCode(reedemCode());
         return repository.save(user);
     }
 

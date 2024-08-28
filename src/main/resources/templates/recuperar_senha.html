@@ -100,10 +100,6 @@
       <p>Olá,</p>
       <p>Recebemos uma solicitação para redefinir a sua senha. Se você não fez essa solicitação, por favor, ignore este e-mail.</p>
       <p>Seu código de verificação é: <b th:text="${codigo}"></b></p>
-      <p>Para redefinir sua senha, clique no botão abaixo:</p>
-      <a th:href="@{https://matafome-api.ashyfield-34914be1.brazilsouth.azurecontainerapps.io/api/auth/resetar-senha/{token}(token=${token})}" class="cta-button">Redefinir Senha</a>
-      <p>Este link de redefinição de senha expirará em 24 horas por razões de segurança.</p>
-      <p>Se precisar de mais ajuda, entre em contato com nossa equipe de suporte.</p>
     </div>
 
     <!-- Footer -->

@@ -133,7 +133,7 @@ public class EmpresaController {
    )
    
    @GetMapping("/{empresaId}/prateleiras")
-   public HashMap<String, Object> obter_TodasPrateleiras_Empresa(@PathVariable("empresaId") Long empresaId) {
+   public HashMap<String, Object> obter_TodasPrateleiras_Empresa(@PathVariable Long empresaId) {
 
        return empresaService.obterTodasPrateleirasEmpresa(empresaId);
        

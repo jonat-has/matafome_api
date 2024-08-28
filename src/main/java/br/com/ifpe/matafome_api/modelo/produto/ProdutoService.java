@@ -1,6 +1,7 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.modelo.prateleira.PrateleiraRepository;
@@ -22,6 +24,11 @@ public class ProdutoService {
 
     @Autowired
     private PrateleiraRepository prateleiraRepository;
+
+
+    @Autowired
+    private AdicionaisRepository adicionaisRepository;
+
 
     @Transactional
     public Produto adicionarProduto(Long prateleiraId, Produto produto) {
@@ -94,4 +101,31 @@ public class ProdutoService {
         Pageable pageable = PageRequest.of(page, size);
         return produtoRepository.findByNomeAndPrateleira(nome, nomePrateleira, pageable);
     }
+
+    /* FUNÇÔES DE ADICIONAIS*/
+
+    public List<Adicionais> getAdicionais() {
+        return adicionaisRepository.findAll();
+    }
+
+    @Transactional
+    public Adicionais adicionarAdicionais(Long produtoId, Adicionais adicionais) {
+
+
+        adicionais.setHabilitado(Boolean.TRUE);
+        adicionais.setVersao(1L);
+        adicionais.setDataCriacao(LocalDate.now());
+
+
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrada", produtoId));
+
+        System.out.println(produto);
+        adicionais.setProduto(produto);
+
+
+        return adicionaisRepository.save(adicionais);
+    }
+
+
 }
