@@ -168,8 +168,8 @@ public class ClienteController {
         }
     )
    @PostMapping("/{clienteId}/enderecos")
-   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable Long clienteId, @RequestBody @Valid Endereco_clienteRequest request) {
-       Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, request.build());
+   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable Long clienteId, @RequestBody @Valid Endereco_clienteRequest enderecoClienteRequest, HttpServletRequest request) {
+       Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, enderecoClienteRequest.build(), request);
        return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.CREATED);
    }
 
@@ -187,9 +187,9 @@ public class ClienteController {
         }
     )
    @PatchMapping("/{clienteId}/enderecos/{enderecoId}")
-   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable Long enderecoId, @RequestBody Endereco_clienteRequest request) {
+   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable Long enderecoId, @RequestBody Endereco_clienteRequest enderecoClienteRequest, HttpServletRequest request) {
 
-       Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, request.build());
+       Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, enderecoClienteRequest.build(), usuarioService.obterUsuarioLogado(request) );
        return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.OK);
    }
 
@@ -265,9 +265,9 @@ public class ClienteController {
         }
     )
    @PatchMapping("/{clientesId}/formasDePagamentos/{formaId}")
-   public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable Long formaId, @RequestBody Forma_pagamentoRequest request) {
+   public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable Long formaId, @RequestBody Forma_pagamentoRequest formaPagamentoRequest, HttpServletRequest request) {
 
-    Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, request.build());
+    Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, formaPagamentoRequest.build(), usuarioService.obterUsuarioLogado(request));
        return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.OK);
    }
 

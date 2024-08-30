@@ -1,11 +1,13 @@
 package br.com.ifpe.matafome_api.modelo.cliente;
 
+import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,9 +84,13 @@ public class ClienteService {
     public Cliente update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
 
         Cliente cliente = repository.findById(id).get();
-        cliente.setNome(clienteAlterado.getNome());
-        cliente.setCpf(clienteAlterado.getCpf());
-        cliente.setFoneCelular(clienteAlterado.getFoneCelular());
+
+        String[] ignoreProperties = getNullPropertyNames(clienteAlterado);
+        List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
+        ignoreList.add("usuario");
+
+        BeanUtils.copyProperties(clienteAlterado, cliente, ignoreList.toArray(new String[0]));
+
         cliente.setVersao(cliente.getVersao() + 1);
         cliente.setDataUltimaModificacao(LocalDate.now());
         cliente.setUltimaModificacaoPor(usuarioLogado);
@@ -92,6 +98,19 @@ public class ClienteService {
         repository.save(cliente);
 
         return cliente;
+    }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 
     @Transactional
@@ -130,7 +149,7 @@ public class ClienteService {
   
 
     @Transactional
-    public Endereco_cliente adicionarEndereco_cliente(Long clienteId, Endereco_cliente endereco) {
+    public Endereco_cliente adicionarEndereco_cliente(Long clienteId, Endereco_cliente endereco, HttpServletRequest request) {
 
         Cliente cliente = this.obterPorID(clienteId);
         
@@ -158,16 +177,17 @@ public class ClienteService {
 
     
    @Transactional
-   public Endereco_cliente atualizarEndereco_cliente(Long id, Endereco_cliente enderecoAlterado) {
+   public Endereco_cliente atualizarEndereco_cliente(Long id, Endereco_cliente enderecoAlterado,Usuario usuarioLogado) {
 
-       Endereco_cliente endereco = endereco_clienteRepository.findById(id).get();
-       endereco.setNumero(enderecoAlterado.getNumero());
-       endereco.setBairro(enderecoAlterado.getBairro());
-       endereco.setCep(enderecoAlterado.getCep());
-       endereco.setCidade(enderecoAlterado.getCidade());
-       endereco.setEstado(enderecoAlterado.getEstado());
-       endereco.setComplemento(enderecoAlterado.getComplemento());
-       endereco.setLogradouro(enderecoAlterado.getLogradouro());
+       Endereco_cliente endereco = endereco_clienteRepository.findById(id)
+               .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+
+       // Copia as propriedades não nulas de enderecoAlterado para endereco
+       BeanUtils.copyProperties(enderecoAlterado, endereco, getNullPropertyNames(enderecoAlterado));
+
+       endereco.setVersao(endereco.getVersao() + 1);
+       endereco.setDataUltimaModificacao(LocalDate.now());
+       endereco.setUltimaModificacaoPor(usuarioLogado);
 
        return endereco_clienteRepository.save(endereco);
    }
@@ -237,18 +257,16 @@ public class ClienteService {
     }
 
     @Transactional
-    public Forma_pagamento atualizarForma_pagamento(Long id, Forma_pagamento forma_pagamentoAlterado) {
+    public Forma_pagamento atualizarForma_pagamento(Long id, Forma_pagamento forma_pagamentoAlterado, Usuario usuarioLogado) {
+        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
 
-        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id).get();
-        forma_pagamento.setTipo(forma_pagamentoAlterado.getTipo());
-        forma_pagamento.setNumero_cartao(forma_pagamentoAlterado.getNumero_cartao());
-        forma_pagamento.setData_validade(forma_pagamentoAlterado.getData_validade());
-        forma_pagamento.setNome_titular(forma_pagamentoAlterado.getNome_titular());
-        forma_pagamento.setCvv(forma_pagamentoAlterado.getCvv());
-        forma_pagamento.setEndereco_cobranca(forma_pagamentoAlterado.getEndereco_cobranca());
-        forma_pagamento.setCidade_cobranca(forma_pagamentoAlterado.getCidade_cobranca());
-        forma_pagamento.setEstado_cobranca(forma_pagamentoAlterado.getEstado_cobranca());
-        forma_pagamento.setCep_cobranca(forma_pagamentoAlterado.getCep_cobranca());
+        // Copia as propriedades não nulas de forma_pagamentoAlterado para forma_pagamento
+        BeanUtils.copyProperties(forma_pagamentoAlterado, forma_pagamento, getNullPropertyNames(forma_pagamentoAlterado));
+
+        forma_pagamento.setVersao(forma_pagamento.getVersao() + 1);
+        forma_pagamento.setDataUltimaModificacao(LocalDate.now());
+        forma_pagamento.setUltimaModificacaoPor(usuarioLogado);
 
         return forma_pagamentoRepository.save(forma_pagamento);
     }
