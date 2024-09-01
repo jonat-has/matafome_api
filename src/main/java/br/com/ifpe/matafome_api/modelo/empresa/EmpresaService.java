@@ -1,13 +1,13 @@
 package br.com.ifpe.matafome_api.modelo.empresa;
 
+import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
+import br.com.ifpe.matafome_api.api.empresa.EmpresaRequest;
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -109,25 +109,36 @@ public class EmpresaService {
     }
 
     @Transactional
-    public Empresa atualizarEmpresa(Long id, AtualizacaoEmpresaRequest request) {
-        Empresa empresa = repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", id));
+    public Empresa atualizarEmpresa(Long id, AtualizacaoEmpresaRequest atualizacaoEmpresaRequest, Usuario usuarioLogado) {
+        Empresa empresa = repository.findById(id).get();
 
-        // Atualizar apenas os campos presentes no DTO
-        BeanUtils.copyProperties(request, empresa, getNullPropertyNamesEmpresa(request));
+        String[] ignoreProperties = getNullPropertyNames(atualizacaoEmpresaRequest);
+        List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
+        ignoreList.add("usuario");
+
+        BeanUtils.copyProperties(atualizacaoEmpresaRequest, empresa, ignoreList.toArray(new String[0]));
 
         empresa.setVersao(empresa.getVersao() + 1);
-        return repository.save(empresa);
+        empresa.setDataUltimaModificacao(LocalDate.now());
+        empresa.setUltimaModificacaoPor(usuarioLogado);
+
+        repository.save(empresa);
+
+        return empresa;
     }
 
-    // Método auxiliar para pegar nomes das propriedades nulas
-    private String[] getNullPropertyNamesEmpresa(Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-        return Arrays.stream(pds)
-                .filter(pd -> src.getPropertyValue(pd.getName()) == null)
-                .map(pd -> pd.getName())
-                .toArray(String[]::new);
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 
     @Transactional
@@ -145,7 +156,7 @@ public class EmpresaService {
 
     /*Funções de Endereços de empresa */
     @Transactional
-    public Endereco_empresa atualizarEndereco_empresa(Long idEmpresa, AtualizacaoEnderecoRequest request) {
+    public Endereco_empresa atualizarEndereco_empresa(Long idEmpresa, AtualizacaoEnderecoRequest request,Usuario usuarioLogado) {
 
         Empresa empresa = repository.findById(idEmpresa).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", idEmpresa));
         Endereco_empresa endereco = empresa.getEndereco();
@@ -153,19 +164,13 @@ public class EmpresaService {
         // Atualizar apenas os campos presentes no DTO
         BeanUtils.copyProperties(request, endereco, getNullPropertyNames(request));
 
+        endereco.setVersao(endereco.getVersao() + 1);
+        endereco.setDataUltimaModificacao(LocalDate.now());
+        endereco.setUltimaModificacaoPor(usuarioLogado);
+
         return endereco_empresaRepository.save(endereco);
     }
 
-    // Método auxiliar para pegar nomes das propriedades nulas
-    private String[] getNullPropertyNames(Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-        return Arrays.stream(pds)
-                .filter(pd -> src.getPropertyValue(pd.getName()) == null)
-                .map(pd -> pd.getName())
-                .toArray(String[]::new);
-    }
 
    @Transactional
    public Empresa_enderecoResponse obterEmpresaComEndereco(Long id) {

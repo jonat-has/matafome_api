@@ -70,9 +70,11 @@ public class SecurityConfiguration {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        // Define permissões para todas as origens
+        configuration.setAllowedOrigins(List.of("*")); // Use `setAllowedOriginPatterns` para permitir todas as origens com credenciais
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Todos os métodos HTTP
         configuration.setAllowedHeaders(List.of("*"));
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

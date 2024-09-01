@@ -21,8 +21,6 @@ public class PedidoRequest {
 
     private Long formaPagamentoId;
 
-    private Long statusId;
-
     private List<ItemPedidoRequest> itens;
 
     private String statusPagamento;

@@ -3,6 +3,8 @@ package br.com.ifpe.matafome_api.api.empresa;
 import java.util.HashMap;
 import java.util.List;
 
+import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,8 @@ public class EmpresaController {
 
     @Autowired
     private PedidoService pedidoService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     /*End point de Empresa */
     /*ENDPOINT PUBLICO */
@@ -54,7 +58,7 @@ public class EmpresaController {
         Empresa empresa = request.build();
 
         Empresa empresaCriada = empresaService.save(empresa);
-        return new ResponseEntity<Empresa>(empresaCriada, HttpStatus.CREATED);
+        return new ResponseEntity<>(empresaCriada, HttpStatus.CREATED);
     }
 
 
@@ -85,9 +89,9 @@ public class EmpresaController {
         description = "Permite atualizar parcialmente as informações de uma empresa já cadastrada, como razão social, nome fantasia, etc. Requer autenticação."
     )
     @PatchMapping("/{idEmpresa}")
-    public ResponseEntity<Empresa> atualizarEmpresa( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEmpresaRequest request) {
+    public ResponseEntity<Empresa> atualizarEmpresa( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEmpresaRequest atualizacaoEmpresaRequest,  HttpServletRequest request) {
 
-        Empresa empresaAtualizada = empresaService.atualizarEmpresa(idEmpresa, request);
+        Empresa empresaAtualizada = empresaService.atualizarEmpresa(idEmpresa, atualizacaoEmpresaRequest.build() , usuarioService.obterUsuarioLogado(request));
 
         return ResponseEntity.ok(empresaAtualizada);
     }
@@ -120,9 +124,9 @@ public class EmpresaController {
         description = "Permite atualizar parcialmente o endereço de uma empresa já cadastrada no sistema com base no ID da empresa. Requer autenticação."
     )
     @PatchMapping("/{idEmpresa}/endereco")
-    public ResponseEntity<Endereco_empresa> atualizarEndereco( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEnderecoRequest request) {
+    public ResponseEntity<Endereco_empresa> atualizarEndereco( @PathVariable Long idEmpresa, @RequestBody @Valid AtualizacaoEnderecoRequest atualizacaoEnderecoRequest, HttpServletRequest request) {
 
-        Endereco_empresa enderecoAtualizado = empresaService.atualizarEndereco_empresa(idEmpresa, request);
+        Endereco_empresa enderecoAtualizado = empresaService.atualizarEndereco_empresa(idEmpresa, atualizacaoEnderecoRequest.build(), usuarioService.obterUsuarioLogado(request));
         return ResponseEntity.ok(enderecoAtualizado);
     }
 

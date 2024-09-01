@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,12 @@ public class PedidoService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public PedidoService(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
     @Autowired
     private EmpresaRepository empresaRepository;
 
@@ -39,7 +46,6 @@ public class PedidoService {
 
     @Autowired
     private Forma_pagamentoRepository formaPagamentoRepository;
-
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -56,7 +62,7 @@ public class PedidoService {
         Endereco_cliente enderecoEntrega = enderecoClienteRepository.findById(pedidoRequest.getEnderecoEntregaId())
             .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
 
-        Forma_pagamento formaPagamento = formaPagamentoRepository.findById((long) 1)
+        Forma_pagamento formaPagamento = formaPagamentoRepository.findById(pedidoRequest.getFormaPagamentoId())
             .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
 
         Pedido pedido = Pedido.builder()
@@ -94,6 +100,8 @@ public class PedidoService {
 
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
+
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
 
         return pedidoRepository.save(pedido);
     }
@@ -144,6 +152,8 @@ public class PedidoService {
 
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
+
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
 
         return pedidoRepository.save(pedido);
     }
