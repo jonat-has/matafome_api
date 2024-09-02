@@ -8,6 +8,10 @@ import java.util.*;
 import br.com.ifpe.matafome_api.api.empresa.EmpresaRequest;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
+import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
+import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -42,27 +46,27 @@ public class EmpresaService {
     @Autowired
     private UsuarioService usuarioService;
 
+    private static final Logger logger = LoggerFactory.getLogger(EmpresaService.class);
+
     /*Funções de empresa */
-
-
     @Transactional
-    public Empresa save(Empresa empresa) throws MessagingException {
+    public Empresa save(Empresa empresa, Usuario usuarioLogado) throws MessagingException {
 
         usuarioService.save(empresa.getUsuario());
         
-        Endereco_empresa enderecoSalvo = salvarEndereco_empresa(empresa.getEndereco());
+        Endereco_empresa enderecoSalvo = salvarEndereco_empresa(empresa.getEndereco(), usuarioLogado);
         empresa.setEndereco(enderecoSalvo);
 
-        empresa.setHabilitado(Boolean.TRUE);
-        empresa.setVersao(1L);
-        empresa.setDataCriacao(LocalDate.now());
+        EntidadeAuditavelService.criarMetadadosEntidade(empresa, usuarioLogado);
+
         Empresa empresaSalvo = repository.save(empresa);
 
         new Thread(() -> {
             try {
                 emailService.enviarEmailConfirmacaoCadastroEmpresa(empresaSalvo);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                logger.error("Erro ao enviar e-mail de confirmação para o cliente ID: {}", empresaSalvo.getId(), e);
+                throw new RuntimeException("Erro ao enviar e-mail de confirmação");
             }
         }).start();
  
@@ -71,7 +75,7 @@ public class EmpresaService {
     }
 
     @Transactional
-    public Endereco_empresa salvarEndereco_empresa(Endereco_empresa endereco) {
+    public Endereco_empresa salvarEndereco_empresa(Endereco_empresa endereco, Usuario usuarioLogado) {
 
         endereco.setCep(endereco.getCep());
         endereco.setLogradouro(endereco.getLogradouro());
@@ -82,24 +86,17 @@ public class EmpresaService {
         endereco.setEstado(endereco.getEstado());
 
 
-        endereco.setHabilitado(Boolean.TRUE);
-        endereco.setVersao(1L);
-        endereco.setDataCriacao(LocalDate.now());
-        Endereco_empresa enderecoSalvo = endereco_empresaRepository.save(endereco);
- 
-        return enderecoSalvo;
- 
+        EntidadeAuditavelService.criarMetadadosEntidade(endereco, usuarioLogado);
+
+        return endereco_empresaRepository.save(endereco);
     }
 
     public List<Empresa> listarTodos() {
-
         return repository.findAll();
     }
 
     public Empresa obterPorID(Long id) {
-
         Optional<Empresa> consulta = repository.findById(id);
-  
        if (consulta.isPresent()) {
            return consulta.get();
        } else {
@@ -110,7 +107,7 @@ public class EmpresaService {
 
     @Transactional
     public Empresa atualizarEmpresa(Long id, AtualizacaoEmpresaRequest atualizacaoEmpresaRequest, Usuario usuarioLogado) {
-        Empresa empresa = repository.findById(id).get();
+        Empresa empresa = this.obterPorID(id);
 
         String[] ignoreProperties = getNullPropertyNames(atualizacaoEmpresaRequest);
         List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
@@ -118,9 +115,7 @@ public class EmpresaService {
 
         BeanUtils.copyProperties(atualizacaoEmpresaRequest, empresa, ignoreList.toArray(new String[0]));
 
-        empresa.setVersao(empresa.getVersao() + 1);
-        empresa.setDataUltimaModificacao(LocalDate.now());
-        empresa.setUltimaModificacaoPor(usuarioLogado);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(empresa, usuarioLogado);
 
         repository.save(empresa);
 
@@ -142,11 +137,10 @@ public class EmpresaService {
     }
 
     @Transactional
-    public void delete(Long id) {
-    
-        Empresa empresa = repository.findById(id).get();
-        empresa.setHabilitado(Boolean.FALSE);
-        empresa.setVersao(empresa.getVersao() + 1);
+    public void delete(Long id, Usuario usuarioLogado) {
+        Empresa empresa = this.obterPorID(id);
+
+        EntidadeAuditavelService.desativarEntidade(empresa, usuarioLogado);
     
         repository.save(empresa);
     }
@@ -158,15 +152,13 @@ public class EmpresaService {
     @Transactional
     public Endereco_empresa atualizarEndereco_empresa(Long idEmpresa, AtualizacaoEnderecoRequest request,Usuario usuarioLogado) {
 
-        Empresa empresa = repository.findById(idEmpresa).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", idEmpresa));
+        Empresa empresa = this.obterPorID(idEmpresa);
         Endereco_empresa endereco = empresa.getEndereco();
 
         // Atualizar apenas os campos presentes no DTO
         BeanUtils.copyProperties(request, endereco, getNullPropertyNames(request));
 
-        endereco.setVersao(endereco.getVersao() + 1);
-        endereco.setDataUltimaModificacao(LocalDate.now());
-        endereco.setUltimaModificacaoPor(usuarioLogado);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(endereco, usuarioLogado);
 
         return endereco_empresaRepository.save(endereco);
     }
@@ -174,7 +166,7 @@ public class EmpresaService {
 
    @Transactional
    public Empresa_enderecoResponse obterEmpresaComEndereco(Long id) {
-    Empresa empresa = repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("empresa", id));
+    Empresa empresa = this.obterPorID(id);
 
     Endereco_empresa endereco = empresa.getEndereco();
 
@@ -232,7 +224,6 @@ public class EmpresaService {
         prateleiras.put("prateleiras", listaPrateleiras_empresa);
         
         return prateleiras;
-
     }
 
 }
