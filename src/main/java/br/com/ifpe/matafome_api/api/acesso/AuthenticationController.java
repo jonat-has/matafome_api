@@ -102,10 +102,8 @@ public class AuthenticationController {
     public Boolean validarCodigo(@RequestBody TrocarSenhaRequest request ) {
         String email = request.getEmail();
         Integer codigo = request.getCodigo();
-        
-        Boolean valido = usuarioService.validarCodigo(codigo,email);
 
-        return valido;
+        return usuarioService.validarCodigo(codigo,email);
     }
     
 
