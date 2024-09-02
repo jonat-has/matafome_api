@@ -55,11 +55,12 @@ public class Pedido extends EntidadeAuditavel {
     @Column(name = "status")
     private StatusPedidoEnum status;
 
-    @Column(nullable = false)
-    private LocalDateTime dataHoraPedido;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_pagamento")
+    private StatusPagamentoEnum statusPagamento;
 
     @Column(nullable = false)
-    private String statusPagamento;
+    private LocalDateTime dataHoraPedido;
 
     @Column(nullable = false)
     private Float taxaEntrega;

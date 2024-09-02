@@ -23,8 +23,6 @@ public class PedidoRequest {
 
     private List<ItemPedidoRequest> itens;
 
-    private String statusPagamento;
-
     private Float taxaEntrega;
 
     @Getter

@@ -2,6 +2,7 @@ package br.com.ifpe.matafome_api.api.pedido;
 
 import java.util.List;
 
+import br.com.ifpe.matafome_api.modelo.pedido.StatusPagamentoEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,15 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedidoEnum novoStatus) {
-        Pedido pedidoAtualizado = pedidoService.alterarStatus(id, novoStatus);
+    @PatchMapping("/{id}/statusPedido")
+    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusRequest novoStatus) {
+        Pedido pedidoAtualizado = pedidoService.alterarStatus(id, novoStatus.getNovoStatusPedido());
+        return ResponseEntity.ok(pedidoAtualizado);
+    }
+
+    @PatchMapping("/{id}/statusPagamento")
+    public ResponseEntity<Pedido> atualizarStatusPagamento(@PathVariable Long id, @RequestBody StatusPagamentoRequest novoStatus) {
+        Pedido pedidoAtualizado = pedidoService.alterarStatusPagamento(id, novoStatus.getNovoStatusPagamento());
         return ResponseEntity.ok(pedidoAtualizado);
     }
 

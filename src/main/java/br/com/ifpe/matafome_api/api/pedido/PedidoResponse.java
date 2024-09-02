@@ -1,5 +1,6 @@
 package br.com.ifpe.matafome_api.api.pedido;
 
+import br.com.ifpe.matafome_api.modelo.pedido.StatusPagamentoEnum;
 import br.com.ifpe.matafome_api.modelo.pedido.StatusPedidoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class PedidoResponse {
     private List<ItensPedidoResponse> itensPedido;
     private StatusPedidoEnum status;
     private LocalDateTime dataHoraPedido;
-    private String statusPagamento;
+    private StatusPagamentoEnum statusPagamento;
     private Float taxaEntrega;
     private Double valorTotal;
 

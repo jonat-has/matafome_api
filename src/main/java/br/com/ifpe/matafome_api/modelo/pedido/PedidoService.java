@@ -71,7 +71,7 @@ public class PedidoService {
                 .enderecoEntrega(enderecoEntrega)
                 .formaPagamento(formaPagamento)
                 .status(StatusPedidoEnum.PENDENTE)
-                .statusPagamento(pedidoRequest.getStatusPagamento())
+                .statusPagamento(StatusPagamentoEnum.PENDENTE)
                 .taxaEntrega(pedidoRequest.getTaxaEntrega())
                 .dataHoraPedido(LocalDateTime.now())
                 .build();
@@ -137,7 +137,6 @@ public class PedidoService {
         pedido.setEmpresa(empresa);
         pedido.setEnderecoEntrega(enderecoEntrega);
         pedido.setFormaPagamento(formaPagamento);
-        pedido.setStatusPagamento(pedidoRequest.getStatusPagamento());
         pedido.setTaxaEntrega(pedidoRequest.getTaxaEntrega());
 
         List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
@@ -174,6 +173,16 @@ public class PedidoService {
         
         // Aplicar regras de negócios para transições de status se necessário
         pedido.setStatus(novoStatus);
+        return pedidoRepository.save(pedido);
+    }
+
+    @Transactional
+    public Pedido alterarStatusPagamento(Long pedidoId, StatusPagamentoEnum novoStatusPagamento) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        // Aplicar regras de negócios para transições de status de pagamento, se necessário
+        pedido.setStatusPagamento(novoStatusPagamento);
         return pedidoRepository.save(pedido);
     }
 

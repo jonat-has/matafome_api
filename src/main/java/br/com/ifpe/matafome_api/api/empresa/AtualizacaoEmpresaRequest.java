@@ -34,11 +34,17 @@ public class AtualizacaoEmpresaRequest {
 
     private LocalTime tempoEntrega;
 
+    private String imgPerfil;
+
+    private  String imgCapa;
+
     public AtualizacaoEmpresaRequest build() {
 
         return AtualizacaoEmpresaRequest.builder()
                 .razaoSocial(razaoSocial)
                 .nomeFantasia(nomeFantasia)
+                .imgCapa(imgCapa)
+                .imgPerfil(imgPerfil)
                 .cnpj(cnpj)
                 .horarioAbertura(horarioAbertura)
                 .horarioFechamento(horarioFechamento)
