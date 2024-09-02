@@ -109,9 +109,9 @@ public class ClienteController {
         }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody AtualizacaoClienteRequest atualizacaoClienteRequest, HttpServletRequest request) {
 
-	    Cliente clienteAtt = clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
+	    Cliente clienteAtt = clienteService.update(id, atualizacaoClienteRequest.build(), usuarioService.obterUsuarioLogado(request));
 	    return new ResponseEntity<>(clienteAtt, HttpStatus.OK);
     }
 

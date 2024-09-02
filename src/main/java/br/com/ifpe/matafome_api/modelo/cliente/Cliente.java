@@ -1,5 +1,6 @@
 package br.com.ifpe.matafome_api.modelo.cliente;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -42,6 +43,12 @@ public class Cliente extends EntidadeAuditavel {
 
     @Column(unique = true)
     private String cpf;
+
+    @Column
+    private String imgCliente;
+
+    @Column
+    private LocalDate dataNascimento;
 
     @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)

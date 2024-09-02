@@ -3,6 +3,7 @@ package br.com.ifpe.matafome_api.modelo.cliente;
 import java.beans.PropertyDescriptor;
 import java.util.*;
 
+import br.com.ifpe.matafome_api.api.cliente.AtualizacaoClienteRequest;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.slf4j.*;
 import org.springframework.beans.BeanUtils;
@@ -76,7 +77,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public Cliente update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
+    public Cliente update(Long id, AtualizacaoClienteRequest clienteAlterado, Usuario usuarioLogado) {
 
         Cliente cliente = this.obterPorID(id);
 
