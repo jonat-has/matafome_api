@@ -1,14 +1,9 @@
 package br.com.ifpe.matafome_api.modelo.empresa;
 
 import java.beans.PropertyDescriptor;
-import java.time.LocalDate;
 import java.util.*;
 
-
-import br.com.ifpe.matafome_api.api.empresa.EmpresaRequest;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
-import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
-import br.com.ifpe.matafome_api.modelo.cliente.ClienteService;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

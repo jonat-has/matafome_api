@@ -103,9 +103,12 @@ public class PedidoService {
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
-        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
-
-        return pedidoRepository.save(pedido);
+        Pedido pedidosave = pedidoRepository.save(pedido);
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedidosave));
+        return pedidosave;
+        // Código abaixo era o original. Três linhas acima foram adicionadas por Eduardo para enviar a mensagem via WebSocket.
+        // messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
+        // return pedidoRepository.save(pedido);
     }
 
     public PedidoResponse findById(Long id) {
@@ -154,9 +157,12 @@ public class PedidoService {
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
-        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
-
-        return pedidoRepository.save(pedido);
+        Pedido pedidosave = pedidoRepository.save(pedido);
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedidosave));
+        return pedidosave;
+        // Código abaixo era o original. Três linhas acima foram adicionadas por Eduardo para enviar a mensagem via WebSocket.
+        // messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
+        // return pedidoRepository.save(pedido);
     }
 
 
