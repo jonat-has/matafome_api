@@ -3,6 +3,8 @@ package br.com.ifpe.matafome_api.modelo.pedido;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -285,4 +287,5 @@ public class PedidoService {
                         .map(this::buildPedidoResponse)
                         .collect(Collectors.toList());
         }
+
 }

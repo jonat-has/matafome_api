@@ -1,10 +1,10 @@
 package br.com.ifpe.matafome_api.modelo.cliente;
 
 import java.beans.PropertyDescriptor;
-import java.time.LocalDate;
 import java.util.*;
 
-import jakarta.servlet.http.HttpServletRequest;
+import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
+import org.slf4j.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -37,6 +37,7 @@ public class ClienteService {
     @Autowired
     private Forma_pagamentoRepository forma_pagamentoRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(ClienteService.class);
 
     /*Funções de cliente */
     @Transactional
@@ -44,46 +45,40 @@ public class ClienteService {
 
         usuarioService.save(cliente.getUsuario());
 
-        cliente.setHabilitado(Boolean.TRUE);
-        cliente.setVersao(1L);
-        cliente.setDataCriacao(LocalDate.now());
-        cliente.setCriadoPor(usuarioLogado);
+        EntidadeAuditavelService.criarMetadadosEntidade(cliente, usuarioLogado);
+
         Cliente clienteSalvo = repository.save(cliente);
         
         new Thread(() -> {
             try {
                 emailService.enviarEmailConfirmacaoCadastroCliente(clienteSalvo);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                logger.error("Erro ao enviar e-mail de confirmação para o cliente ID: {}", clienteSalvo.getId(), e);
+                throw new RuntimeException("Erro ao enviar e-mail de confirmação");
             }
         }).start();
  
  
         return clienteSalvo;
- 
     }
 
     public List<Cliente> listarTodos() {
-
         return repository.findAll();
     }
 
     public Cliente obterPorID(Long id) {
-
         Optional<Cliente> consulta = repository.findById(id);
-  
        if (consulta.isPresent()) {
            return consulta.get();
        } else {
            throw new EntidadeNaoEncontradaException("Cliente", id);
        }
-
     }
 
     @Transactional
     public Cliente update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
 
-        Cliente cliente = repository.findById(id).get();
+        Cliente cliente = this.obterPorID(id);
 
         String[] ignoreProperties = getNullPropertyNames(clienteAlterado);
         List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
@@ -91,9 +86,7 @@ public class ClienteService {
 
         BeanUtils.copyProperties(clienteAlterado, cliente, ignoreList.toArray(new String[0]));
 
-        cliente.setVersao(cliente.getVersao() + 1);
-        cliente.setDataUltimaModificacao(LocalDate.now());
-        cliente.setUltimaModificacaoPor(usuarioLogado);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(cliente, usuarioLogado);
     
         repository.save(cliente);
 
@@ -114,11 +107,11 @@ public class ClienteService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, Usuario usuarioLogado) {
     
-        Cliente cliente = repository.findById(id).get();
-        cliente.setHabilitado(Boolean.FALSE);
-        cliente.setVersao(cliente.getVersao() + 1);
+        Cliente cliente = this.obterPorID(id);
+
+        EntidadeAuditavelService.desativarEntidade(cliente, usuarioLogado);
     
         repository.save(cliente);
     }
@@ -135,41 +128,35 @@ public class ClienteService {
         List<Endereco_cliente> listaEndereco_cliente = cliente.getEnderecos();
 
         if (listaEndereco_cliente == null) {
-
             listaEndereco_cliente = new ArrayList<>();
-
         }
 
         enderecosPlusId.put("idCliente", idCliente);
         enderecosPlusId.put("enderecos", listaEndereco_cliente);
 
         return enderecosPlusId;
-
     }
   
 
     @Transactional
-    public Endereco_cliente adicionarEndereco_cliente(Long clienteId, Endereco_cliente endereco, HttpServletRequest request) {
+    public Endereco_cliente adicionarEndereco_cliente(Long clienteId, Endereco_cliente endereco, Usuario usuarioLogado) {
 
         Cliente cliente = this.obterPorID(clienteId);
-        
-        //Primeiro salva o Endereco_cliente:
 
         endereco.setCliente(cliente);
-        endereco.setHabilitado(Boolean.TRUE);
+        EntidadeAuditavelService.criarMetadadosEntidade(endereco, usuarioLogado);
         endereco_clienteRepository.save(endereco);
-        
-        //Depois acrescenta o endereço criado ao cliente e atualiza o cliente:
 
         List<Endereco_cliente> listaEndereco_cliente = cliente.getEnderecos();
         
         if (listaEndereco_cliente == null) {
-            listaEndereco_cliente = new ArrayList<Endereco_cliente>();
+            listaEndereco_cliente = new ArrayList<>();
         }
         
         listaEndereco_cliente.add(endereco);
         cliente.setEnderecos(listaEndereco_cliente);
-        cliente.setVersao(cliente.getVersao() + 1);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(cliente, usuarioLogado);
         repository.save(cliente);
         
         return endereco;
@@ -185,23 +172,26 @@ public class ClienteService {
        // Copia as propriedades não nulas de enderecoAlterado para endereco
        BeanUtils.copyProperties(enderecoAlterado, endereco, getNullPropertyNames(enderecoAlterado));
 
-       endereco.setVersao(endereco.getVersao() + 1);
-       endereco.setDataUltimaModificacao(LocalDate.now());
-       endereco.setUltimaModificacaoPor(usuarioLogado);
+       EntidadeAuditavelService.atualizarMetadadosEntidade(endereco, usuarioLogado);
 
        return endereco_clienteRepository.save(endereco);
    }
 
    @Transactional
-    public void removerEndereco_cliente(Long id) {
+    public void removerEndereco_cliente(Long id, Usuario usuarioLogado) {
 
-        Endereco_cliente endereco = endereco_clienteRepository.findById(id).get();
-        endereco.setHabilitado(Boolean.FALSE);
+        Endereco_cliente endereco = endereco_clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+
+        EntidadeAuditavelService.desativarEntidade(endereco, usuarioLogado);
+
         endereco_clienteRepository.save(endereco);
 
         Cliente cliente = this.obterPorID(endereco.getCliente().getId());
         cliente.getEnderecos().remove(endereco);
-        cliente.setVersao(cliente.getVersao() + 1);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(cliente, usuarioLogado);
+
         repository.save(cliente);
     }
 
@@ -230,27 +220,27 @@ public class ClienteService {
     }
 
     @Transactional
-    public Forma_pagamento adicionarForma_pagamento(Long clienteId, Forma_pagamento forma_pagamento) {
+    public Forma_pagamento adicionarForma_pagamento(Long clienteId, Forma_pagamento forma_pagamento, Usuario usuarioLogado) {
  
         Cliente cliente = this.obterPorID(clienteId);
-       
-        //Primeiro salva o Forma_pagamento:
- 
+
         forma_pagamento.setCliente(cliente);
-        forma_pagamento.setHabilitado(Boolean.TRUE);
+
+        EntidadeAuditavelService.criarMetadadosEntidade(forma_pagamento, usuarioLogado);
+
         forma_pagamentoRepository.save(forma_pagamento);
-       
-        //Depois acrescenta o endereço criado ao cliente e atualiza o cliente:
  
         List<Forma_pagamento> listaForma_pagamento = cliente.getForma_pagamento();
        
         if (listaForma_pagamento == null) {
-            listaForma_pagamento = new ArrayList<Forma_pagamento>();
+            listaForma_pagamento = new ArrayList<>();
         }
        
         listaForma_pagamento.add(forma_pagamento);
         cliente.setForma_pagamento(listaForma_pagamento);
-        cliente.setVersao(cliente.getVersao() + 1);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(cliente, usuarioLogado);
+
         repository.save(cliente);
        
         return forma_pagamento;
@@ -264,23 +254,25 @@ public class ClienteService {
         // Copia as propriedades não nulas de forma_pagamentoAlterado para forma_pagamento
         BeanUtils.copyProperties(forma_pagamentoAlterado, forma_pagamento, getNullPropertyNames(forma_pagamentoAlterado));
 
-        forma_pagamento.setVersao(forma_pagamento.getVersao() + 1);
-        forma_pagamento.setDataUltimaModificacao(LocalDate.now());
-        forma_pagamento.setUltimaModificacaoPor(usuarioLogado);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(forma_pagamento, usuarioLogado);
 
         return forma_pagamentoRepository.save(forma_pagamento);
     }
 
     @Transactional
-    public void removerForma_pagamento(Long id) {
+    public void removerForma_pagamento(Long id, Usuario usuarioLogado) {
 
-        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id).get();
-        forma_pagamento.setHabilitado(Boolean.FALSE);
+        Forma_pagamento forma_pagamento = forma_pagamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
+
+        EntidadeAuditavelService.desativarEntidade(forma_pagamento, usuarioLogado);
+
         forma_pagamentoRepository.save(forma_pagamento);
 
         Cliente cliente = this.obterPorID(forma_pagamento.getCliente().getId());
-        cliente.getForma_pagamento().remove(forma_pagamento);
-        cliente.setVersao(cliente.getVersao() + 1);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(cliente, usuarioLogado);
+
         repository.save(cliente);
     }
 

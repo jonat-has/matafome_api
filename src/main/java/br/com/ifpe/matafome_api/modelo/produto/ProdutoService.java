@@ -1,9 +1,13 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
+import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
+import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -127,5 +131,25 @@ public class ProdutoService {
         return adicionaisRepository.save(adicionais);
     }
 
+    @Transactional
+    public HashMap<String, Object> obterTodosAdicionaisProduto(Long idProduto){
 
+        Produto produto = this.obterPorID(idProduto);
+
+        HashMap<String, Object> produto_id = new HashMap<>();
+
+        List<Adicionais> listaAddProduto = produto.getAdicionais();
+
+        if (listaAddProduto == null) {
+
+            listaAddProduto = new ArrayList<>();
+
+        }
+
+        produto_id.put("idProduto", idProduto);
+        produto_id.put("adicionais", listaAddProduto);
+
+        return produto_id;
+
+    }
 }

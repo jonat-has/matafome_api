@@ -21,6 +21,7 @@ import br.com.ifpe.matafome_api.modelo.produto.Produto;
 import br.com.ifpe.matafome_api.modelo.produto.ProdutoService;
 import jakarta.validation.Valid;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -103,5 +104,12 @@ public class ProdutoController {
     public ResponseEntity<List<Adicionais>> getAdicionais() {
         List<Adicionais> adicionais = produtoService.getAdicionais();
         return ResponseEntity.ok(adicionais);
+    }
+
+    @GetMapping("/{produtoId}/adicionais")
+    public HashMap<String, Object> obter_todos_Adicionais(@PathVariable Long produtoId) {
+
+        return produtoService.obterTodosAdicionaisProduto(produtoId);
+
     }
 }
