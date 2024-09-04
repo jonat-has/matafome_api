@@ -74,6 +74,7 @@ public class SecurityConfiguration {
         configuration.setAllowedOrigins(List.of("*")); // Use `setAllowedOriginPatterns` para permitir todas as origens com credenciais
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Todos os métodos HTTP
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(false);
 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

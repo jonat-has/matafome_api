@@ -103,9 +103,9 @@ public class PedidoService {
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
-        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
-
-        return pedidoRepository.save(pedido);
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedidoSalvo.getEmpresa().getId(), buildPedidoResponse(pedidoSalvo));
+        return pedidoSalvo;
     }
 
     public PedidoResponse findById(Long id) {
@@ -154,9 +154,9 @@ public class PedidoService {
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
-        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedido.getEmpresa().getId(), buildPedidoResponse(pedido));
-
-        return pedidoRepository.save(pedido);
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedidoSalvo.getEmpresa().getId(), buildPedidoResponse(pedidoSalvo));
+        return pedidoSalvo;
     }
 
 

@@ -85,6 +85,7 @@ public class PrateleiraController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar prateleira", description = "Remove uma prateleira existente pelo ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Prateleira deletada com sucesso",
                     content = @Content),
