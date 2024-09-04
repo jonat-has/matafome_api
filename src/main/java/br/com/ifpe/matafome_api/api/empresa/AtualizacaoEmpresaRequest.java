@@ -2,6 +2,8 @@ package br.com.ifpe.matafome_api.api.empresa;
 
 import java.time.LocalTime;
 
+import br.com.ifpe.matafome_api.modelo.empresa.CategoriaEmpresaEnum;
+
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +28,7 @@ public class AtualizacaoEmpresaRequest {
     @Pattern(regexp = "\\(\\d{2}\\) \\d{4,5}-\\d{4}", message = "O Telefone deve estar no formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
 
-    private String categoria;
+    private CategoriaEmpresaEnum categoria;
 
     private LocalTime horarioAbertura;
 
@@ -36,7 +38,7 @@ public class AtualizacaoEmpresaRequest {
 
     private String imgPerfil;
 
-    private  String imgCapa;
+    private String imgCapa;
 
     public AtualizacaoEmpresaRequest build() {
 

@@ -1,7 +1,7 @@
 package br.com.ifpe.matafome_api.modelo.pedido;
 
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
@@ -17,6 +17,5 @@ public enum StatusPagamentoEnum {
 
 
     private final String descricao;
-
 
 }

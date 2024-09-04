@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.empresa.CategoriaEmpresaEnum;
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
 import br.com.ifpe.matafome_api.modelo.empresa.Endereco_empresa;
 import jakarta.validation.constraints.Email;
@@ -75,7 +76,7 @@ public class EmpresaRequest {
     private String estado;
 
     private String complemento;
-    private String categoria;
+    private CategoriaEmpresaEnum categoria;
     private LocalTime horario_abertura;
     private LocalTime horario_fechamento;
     private String img_capa;
@@ -120,7 +121,7 @@ public class EmpresaRequest {
            .taxaFrete(taxa_frete)
            .telefone(telefone)
            .imgPerfil(img_perfil)
-           .categoria(categoria)
+           .categoria(categoria.getCategoria())
            .build();
    }
 

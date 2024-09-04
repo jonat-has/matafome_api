@@ -2,6 +2,7 @@ package br.com.ifpe.matafome_api.api.empresa;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -197,9 +198,11 @@ public class EmpresaController {
    public ResponseEntity<Page<Empresa>> buscarPorNomeFantasia(
            @RequestParam String nome_fantasia,
            @RequestParam(defaultValue = "0") int page,
-           @RequestParam(defaultValue = "10") int size) {return ResponseEntity.ok(empresaService.buscarPorNomeFantasia(nome_fantasia, page, size));}
+           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(empresaService.buscarPorNomeFantasia(nome_fantasia, page, size));
+    }
 
-    @Operation( summary = "Busca empresas por categoria",
+    @Operation( summary = "Busca empresas por categoria(OBS:Esse endpoint e pra usar na barra de pesquisa)",
                 description = "Retorna uma lista paginada de empresas que pertencem à categoria especificada.")
     @GetMapping("/buscarPorCategoria")
     public ResponseEntity<Page<Empresa>> buscarPorCategoria(
@@ -207,6 +210,16 @@ public class EmpresaController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(empresaService.buscarPorCategoria(categoria, page, size));
+    }
+
+    @Operation( summary = "Filtrar empresas por categoria(OBS:Esse endpoint e para filtrar empresa pelos card de categoria)",
+            description = "Retorna uma lista paginada de empresas que pertencem à categoria especificada.")
+    @GetMapping("/filtrarPorCategoria")
+    public ResponseEntity<Page<Empresa>> filtrarPorCategoria(
+            @RequestParam String categoria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(empresaService.filtrarPorCategoria(categoria, page, size));
     }
 
     @Operation( summary = "Busca empresas por nome fantasia e categoria",
@@ -236,5 +249,8 @@ public class EmpresaController {
        return pedidoService.findPedidosByEmpresaId(idEmpresa);
    }
 
-   
+    @GetMapping("/categorias")
+    public Map<String, String> getCategorias() {
+        return empresaService.getCategorias();
+    }
 }

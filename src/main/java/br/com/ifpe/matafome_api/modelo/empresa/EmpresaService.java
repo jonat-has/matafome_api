@@ -3,6 +3,8 @@ package br.com.ifpe.matafome_api.modelo.empresa;
 import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import br.com.ifpe.matafome_api.api.empresa.EmpresaRequest;
@@ -109,6 +111,10 @@ public class EmpresaService {
     public Empresa atualizarEmpresa(Long id, AtualizacaoEmpresaRequest atualizacaoEmpresaRequest, Usuario usuarioLogado) {
         Empresa empresa = this.obterPorID(id);
 
+        if (atualizacaoEmpresaRequest.getCategoria() != null) {
+            empresa.setCategoria(atualizacaoEmpresaRequest.getCategoria().getCategoria());
+        }
+
         String[] ignoreProperties = getNullPropertyNames(atualizacaoEmpresaRequest);
         List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
         ignoreList.add("usuario");
@@ -197,7 +203,12 @@ public class EmpresaService {
 
     public Page<Empresa> buscarPorCategoria(String categoria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findByCategoriaIgnoreCase(categoria, pageable);
+        return repository.findByCategoriaContainingIgnoreCase(categoria, pageable);
+    }
+
+    public Page<Empresa> filtrarPorCategoria(String categoria, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findByCategoriaContainingIgnoreCase(categoria, pageable);
     }
 
     public Page<Empresa> buscarPorNomeFantasiaECategoria(String nomeFantasia, String categoria, int page, int size) {
@@ -224,6 +235,14 @@ public class EmpresaService {
         prateleiras.put("prateleiras", listaPrateleiras_empresa);
         
         return prateleiras;
+    }
+
+    public Map<String, String> getCategorias() {
+        return Stream.of(CategoriaEmpresaEnum.values())
+                .collect(Collectors.toMap(
+                        CategoriaEmpresaEnum::name, // Chave do enum
+                        CategoriaEmpresaEnum::getCategoria // Descrição
+                ));
     }
 
 }

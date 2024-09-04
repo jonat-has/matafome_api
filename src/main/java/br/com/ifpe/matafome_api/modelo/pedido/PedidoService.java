@@ -216,7 +216,7 @@ public class PedidoService {
                     .tempoEntrega(pedido.getEmpresa().getTempoEntrega())
                     .imgCapa(pedido.getEmpresa().getImgCapa())
                     .imgPerfil(pedido.getEmpresa().getImgPerfil())
-                    .categoria(pedido.getEmpresa().getCategoria())
+                   /* .categoria(pedido.getEmpresa().getCategoria())*/
                     .telefone(pedido.getEmpresa().getTelefone())
                     .taxaFrete(pedido.getEmpresa().getTaxaFrete())
                     .endereco(PedidoResponse.EnderecoResponse.builder()
