@@ -1,13 +1,16 @@
 package br.com.ifpe.matafome_api.modelo.pedido;
 
 
+import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -53,7 +56,7 @@ public class PedidoService {
     private ProdutoRepository produtoRepository;
 
     @Transactional
-    public Pedido save(PedidoRequest pedidoRequest) {
+    public Pedido save(PedidoRequest pedidoRequest,  Usuario usuarioLogado) {
 
         Cliente cliente = clienteRepository.findById(pedidoRequest.getClienteId())
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
@@ -78,14 +81,11 @@ public class PedidoService {
                 .dataHoraPedido(LocalDateTime.now())
                 .build();
 
-                List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
-
-                    return Itens_pedido.builder()
-                            .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
-                            .pedido(pedido)
-                            .quantidade(item.getQuantidade())
-                            .build();
-                }).collect(Collectors.toList());
+                List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> Itens_pedido.builder()
+                        .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
+                        .pedido(pedido)
+                        .quantidade(item.getQuantidade())
+                        .build()).collect(Collectors.toList());
             
 
                 itensPedido.forEach(item -> {
@@ -94,13 +94,10 @@ public class PedidoService {
                     item.setDataCriacao(LocalDate.now());
                 });
 
-        pedido.setHabilitado(Boolean.TRUE);
-        pedido.setVersao(1L);
-        pedido.setDataCriacao(LocalDate.now());
+        EntidadeAuditavelService.criarMetadadosEntidade(pedido, usuarioLogado);
 
         pedido.setItensPedido(itensPedido);
 
-        // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
@@ -122,7 +119,7 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido update(Long id, PedidoRequest pedidoRequest) {
+    public Pedido update(Long id, PedidoRequest pedidoRequest, Usuario usuarioLogado) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
@@ -141,19 +138,18 @@ public class PedidoService {
         pedido.setFormaPagamento(formaPagamento);
         pedido.setTaxaEntrega(pedidoRequest.getTaxaEntrega());
 
-        List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> {
-            return Itens_pedido.builder()
-                    .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
-                    .pedido(pedido) 
-                    .quantidade(item.getQuantidade())
-                    .build();
-        }).collect(Collectors.toList());
+        List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> Itens_pedido.builder()
+                .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
+                .pedido(pedido)
+                .quantidade(item.getQuantidade())
+                .build()).collect(Collectors.toList());
     
         pedido.setItensPedido(itensPedido);
 
         // Calcular o valor total do pedido
         calcularValorTotal(pedido);
 
+        EntidadeAuditavelService.atualizarMetadadosEntidade(pedido, usuarioLogado);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
         messagingTemplate.convertAndSend("/topic/pedidoEmpresa/" + pedidoSalvo.getEmpresa().getId(), buildPedidoResponse(pedidoSalvo));
         return pedidoSalvo;
@@ -161,30 +157,34 @@ public class PedidoService {
 
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, Usuario usuarioLogado) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        pedidoRepository.delete(pedido);
+        EntidadeAuditavelService.desativarEntidade(pedido, usuarioLogado);
+        pedidoRepository.save(pedido);
     }
 
     @Transactional
-    public Pedido alterarStatus(Long pedidoId, StatusPedidoEnum novoStatus) {
+    public Pedido alterarStatus(Long pedidoId, StatusPedidoEnum novoStatus, Usuario usuarioLogado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
             .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
         
-        // Aplicar regras de negócios para transições de status se necessário
+
         pedido.setStatus(novoStatus);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(pedido, usuarioLogado);
         return pedidoRepository.save(pedido);
     }
 
     @Transactional
-    public Pedido alterarStatusPagamento(Long pedidoId, StatusPagamentoEnum novoStatusPagamento) {
+    public Pedido alterarStatusPagamento(Long pedidoId, StatusPagamentoEnum novoStatusPagamento, Usuario usuarioLogado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        // Aplicar regras de negócios para transições de status de pagamento, se necessário
+
         pedido.setStatusPagamento(novoStatusPagamento);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(pedido, usuarioLogado);
         return pedidoRepository.save(pedido);
     }
 
@@ -216,7 +216,7 @@ public class PedidoService {
                     .tempoEntrega(pedido.getEmpresa().getTempoEntrega())
                     .imgCapa(pedido.getEmpresa().getImgCapa())
                     .imgPerfil(pedido.getEmpresa().getImgPerfil())
-                   /* .categoria(pedido.getEmpresa().getCategoria())*/
+                    .categoria(pedido.getEmpresa().getCategoria())
                     .telefone(pedido.getEmpresa().getTelefone())
                     .taxaFrete(pedido.getEmpresa().getTaxaFrete())
                     .endereco(PedidoResponse.EnderecoResponse.builder()
@@ -288,4 +288,16 @@ public class PedidoService {
                         .collect(Collectors.toList());
         }
 
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
 }
