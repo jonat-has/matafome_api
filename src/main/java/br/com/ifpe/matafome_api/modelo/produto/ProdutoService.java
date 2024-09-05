@@ -1,13 +1,18 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
+import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
+import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
+import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,38 +40,26 @@ public class ProdutoService {
 
 
     @Transactional
-    public Produto adicionarProduto(Long prateleiraId, Produto produto) {
+    public Produto adicionarProduto(Long obterPorIDPrateleira, Produto produto, Usuario usuarioLogado) {
+        Prateleira prateleira = this.obterPorIDPrateleira(obterPorIDPrateleira);
 
-        produto.setHabilitado(Boolean.TRUE);
-        produto.setVersao(1L);
-        produto.setDataCriacao(LocalDate.now());
-
-        // Verifica se a prateleira existe
-        Prateleira prateleira = prateleiraRepository.findById(prateleiraId)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Prateleira não encontrada", prateleiraId));
-
-        // Associa o produto à prateleira
+        EntidadeAuditavelService.criarMetadadosEntidade(produto, usuarioLogado);
         produto.setPrateleira(prateleira);
 
-        // Salva o produto
         return produtoRepository.save(produto);
     }
 
 
     @Transactional
-    public Produto atualizarPrateleira(Long produtoId, Long novaPrateleiraId) {
-        // Verifica se o produto existe
-        Produto produto = produtoRepository.findById(produtoId)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado", novaPrateleiraId));
+    public Produto atualizarPrateleira(Long produtoId, Long novaPrateleiraId, Usuario usuarioLogado) {
+        Produto produto = this.obterPorID(produtoId);
+        Prateleira novaPrateleira = this.obterPorIDPrateleira(novaPrateleiraId);
 
-        // Verifica se a nova prateleira existe
-        Prateleira novaPrateleira = prateleiraRepository.findById(novaPrateleiraId)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Prateleira não encontrada", novaPrateleiraId));
+        EntidadeAuditavelService.atualizarMetadadosEntidade(produto, usuarioLogado);
+        EntidadeAuditavelService.atualizarMetadadosEntidade(novaPrateleira, usuarioLogado);
 
-        // Atualiza a prateleira do produto
         produto.setPrateleira(novaPrateleira);
 
-        // Salva as alterações
         return produtoRepository.save(produto);
     }
 
@@ -76,24 +69,59 @@ public class ProdutoService {
     }
 
     public Produto obterPorID(Long id) {
-        return produtoRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado", id));
+        Optional<Produto> consulta = produtoRepository.findById(id);
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("produto", id);
+        }
+    }
+
+    public Prateleira obterPorIDPrateleira(Long id) {
+        Optional<Prateleira> consulta = prateleiraRepository.findById(id);
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("prateleira", id);
+        }
     }
 
     @Transactional
-    public Produto update(Long id, Produto produtoAlterado) {
+    public Produto update(Long id, Produto produtoAlterado, Usuario usuarioLogado) {
         Produto produto = obterPorID(id);
-        produto.setNome(produtoAlterado.getNome());
-        produto.setPreco(produtoAlterado.getPreco());
-        produto.setDescricao(produtoAlterado.getDescricao());
-        produto.setUrlImagem(produtoAlterado.getUrlImagem());
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(produto, usuarioLogado );
+
+        String[] ignoreProperties = getNullPropertyNames(produtoAlterado);
+        List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
+        ignoreList.add("adicionais");
+        ignoreList.add("prateleira");
+
+        BeanUtils.copyProperties(produtoAlterado, produto, ignoreList.toArray(new String[0]));
+
         return produtoRepository.save(produto);
     }
 
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, Usuario usuarioLogado) {
         Produto produto = obterPorID(id);
-        produtoRepository.delete(produto);
+
+        EntidadeAuditavelService.desativarEntidade(produto, usuarioLogado);
+
+        produtoRepository.save(produto);
     }
 
     public Page<Produto> buscarPorNome(String nome, int page, int size) {
@@ -113,20 +141,13 @@ public class ProdutoService {
     }
 
     @Transactional
-    public Adicionais adicionarAdicionais(Long produtoId, Adicionais adicionais) {
+    public Adicionais adicionarAdicionais(Long produtoId, Adicionais adicionais, Usuario usuarioLogado) {
 
+        Produto produto = obterPorID(produtoId);
 
-        adicionais.setHabilitado(Boolean.TRUE);
-        adicionais.setVersao(1L);
-        adicionais.setDataCriacao(LocalDate.now());
+        EntidadeAuditavelService.criarMetadadosEntidade(adicionais, usuarioLogado);
 
-
-        Produto produto = produtoRepository.findById(produtoId)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrada", produtoId));
-
-        System.out.println(produto);
         adicionais.setProduto(produto);
-
 
         return adicionaisRepository.save(adicionais);
     }
@@ -147,9 +168,36 @@ public class ProdutoService {
         }
 
         produto_id.put("idProduto", idProduto);
+        produto_id.put("Nome:", produto.getNome());
         produto_id.put("adicionais", listaAddProduto);
 
         return produto_id;
+    }
 
+    @Transactional
+    public  Adicionais atualizarAdicionais(Long adicionaisId, Adicionais adicionaisAlterado, Usuario usuarioLogado) {
+        Adicionais adicionais = adicionaisRepository.findById(adicionaisId).get();
+
+        String[] ignoreProperties = getNullPropertyNames(adicionaisAlterado);
+        List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoreProperties));
+        ignoreList.add("produto");
+
+        BeanUtils.copyProperties(adicionaisAlterado, adicionais, ignoreList.toArray(new String[0]));
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(adicionais, usuarioLogado);
+
+        adicionaisRepository.save(adicionais);
+
+        return adicionais;
+    }
+
+    @Transactional
+    public void deleteAdicionais(Long adicionaisId, Usuario usuarioLogado) {
+        Adicionais adicionais = adicionaisRepository.findById(adicionaisId).get();
+
+        EntidadeAuditavelService.desativarEntidade(adicionais, usuarioLogado);
+
+        adicionais.setProduto(null);
+        adicionaisRepository.save(adicionais);
     }
 }

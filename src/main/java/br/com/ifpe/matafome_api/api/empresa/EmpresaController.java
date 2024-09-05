@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
+import br.com.ifpe.matafome_api.modelo.empresa.CategoriaEmpresaEnum;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,6 +250,14 @@ public class EmpresaController {
        return pedidoService.findPedidosByEmpresaId(idEmpresa);
    }
 
+    @Operation(
+            summary = "Lista todas as categorias.",
+            description = "Endpoint para recuperar todas as categorias cadastrada no sistema.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pedidos retornados com sucesso", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoriaEmpresaEnum.class)))),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+            }
+    )
     @GetMapping("/categorias")
     public Map<String, String> getCategorias() {
         return empresaService.getCategorias();
