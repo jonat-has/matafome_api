@@ -1,5 +1,7 @@
 package br.com.ifpe.matafome_api.api.pedido;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -122,4 +125,13 @@ public class PedidoController {
         pedidoService.delete(id, usuarioService.obterUsuarioLogado(request));
     }
 
+    @GetMapping("/historicoPedidos")
+    public ResponseEntity<HistoricoPedidosResponse> getHistoricoPedidos(
+            @RequestParam Long empresaId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        HistoricoPedidosResponse historico = pedidoService.getHistoricoPedidos(empresaId, startDate, endDate);
+        return ResponseEntity.ok(historico);
+    }
 }

@@ -25,9 +25,9 @@ public class PedidoWebSocketController {
         return pedidoService.findPedidosByEmpresaId(idEmpresa);
     }
 
-    /*@MessageMapping("/api/pedidos")
+    @MessageMapping("/api/pedidos/{id}/statusPedido")
     @SendTo("/topic/pedidoCliente/{idCliente}")
-    public List<PedidoResponse> pedidosDoCliente(@PathVariable Long idCliente) {
+    public List<PedidoResponse> pedidosDoCliente(@DestinationVariable Long idCliente) {
         return pedidoService.findPedidosByClienteId(idCliente);
-    }*/
+    }
 }

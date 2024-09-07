@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CategoriaEmpresaEnum {
-    PIZZARIA("Pizzaria"),
+
+  /*  PIZZARIA("Pizzaria"),
     HAMBURGUERIA("Hamburgueria"),
     SUSHI_BAR("Sushi Bar"),
     ITALIANA("Italiana"),
@@ -28,7 +29,19 @@ public enum CategoriaEmpresaEnum {
     SORVETERIA("Sorveteria"),
     GOURMET("Gourmet"),
     MINEIRA("Mineira"),
-    NORDESTINA("Nordestina");
+    NORDESTINA("Nordestina");*/
+
+    ACAITERIA("Açaiteria"),
+    CAFETERIA("Cafeteria"),
+    CHURRASCARIA("Churrascaria"),
+    HAMBURGUERIA("Hamburgueria"),
+    LANCHONETE("Lanchonete"),
+    PADARIA("Padaria"),
+    PIZZARIA("Pizzaria"),
+    RESTAURANTE("Restaurante"),
+    SORVETERIA("Sorveteria"),
+    SUSHI_BAR("Sushi Bar"),
+    OUTRO("Outro");
 
     private final String categoria;
 }

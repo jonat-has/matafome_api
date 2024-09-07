@@ -1,16 +1,14 @@
 package br.com.ifpe.matafome_api.modelo.pedido;
 
 
-import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import br.com.ifpe.matafome_api.api.pedido.HistoricoPedidosResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -174,7 +172,9 @@ public class PedidoService {
         pedido.setStatus(novoStatus);
 
         EntidadeAuditavelService.atualizarMetadadosEntidade(pedido, usuarioLogado);
-        return pedidoRepository.save(pedido);
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        messagingTemplate.convertAndSend("/topic/pedidoCliente/" + pedidoSalvo.getCliente().getId(), buildPedidoResponse(pedidoSalvo));
+        return pedidoSalvo;
     }
 
     @Transactional
@@ -288,7 +288,7 @@ public class PedidoService {
                         .collect(Collectors.toList());
         }
 
-    private String[] getNullPropertyNames(Object source) {
+   /* private String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
@@ -299,5 +299,36 @@ public class PedidoService {
         }
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
+    }*/
+
+    public HistoricoPedidosResponse getHistoricoPedidos(Long empresaId, LocalDate startDate, LocalDate endDate) {
+        // Total de vendas no período
+        Double totalVendas = pedidoRepository.findTotalVendas(empresaId, startDate, endDate);
+
+        // Quantidade de clientes únicos no período
+        Long quantidadeClientes = pedidoRepository.countClientes(empresaId, startDate, endDate);
+
+        // Quantidade total de pedidos no período
+        Long quantidadePedidos = pedidoRepository.countPedidos(empresaId, startDate, endDate);
+
+        // Data de hoje para calcular pedidos feitos hoje
+        LocalDate hoje = LocalDate.now();
+        Long pedidosHoje = pedidoRepository.countPedidosHoje(empresaId, hoje);
+
+        LocalDate seteDiasAtras = hoje.minusDays(7);
+        List<PedidosPorDia> pedidosUltimos7Dias = pedidoRepository.findPedidosUltimos7Dias(empresaId, seteDiasAtras, hoje);
+
+        //Últimos 5 clientes
+        List<UltimosClientes> ultimasVendas = pedidoRepository.findUltimasVendas(empresaId);
+
+        // Cria o response com os dados obtidos, tratando nulos com valores padrão
+        return HistoricoPedidosResponse.builder()
+                .totalVendas(totalVendas)
+                .quantidadeClientes(quantidadeClientes)
+                .quantidadePedidos(quantidadePedidos)
+                .pedidosHoje(pedidosHoje != null ? pedidosHoje : 0)
+                .pedidosUltimos7Dias(pedidosUltimos7Dias)
+                .ultimasVendas(ultimasVendas)
+                .build();
     }
 }

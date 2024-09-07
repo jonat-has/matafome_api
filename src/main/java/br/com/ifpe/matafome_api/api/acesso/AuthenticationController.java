@@ -128,7 +128,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "400", description = "Código inválido"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    @PostMapping("/validarCodigoDeRecuperação")
+    @PostMapping("/validarCodigoDeRecuperacao")
     public Boolean validarCodigo(@RequestBody TrocarSenhaRequest request ) {
         String email = request.getEmail();
         Integer codigo = request.getCodigo();
