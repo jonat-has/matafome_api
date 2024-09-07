@@ -79,8 +79,6 @@ public class EmpresaRequest {
     private CategoriaEmpresaEnum categoria;
     private LocalTime horario_abertura;
     private LocalTime horario_fechamento;
-    private String img_capa;
-    private String img_perfil;
     private LocalTime tempo_entrega;
 
 
@@ -116,11 +114,9 @@ public class EmpresaRequest {
            .cnpj(cnpj)
            .horarioAbertura(horario_abertura)
            .horarioFechamento(horario_fechamento)
-           .imgCapa(img_capa)
            .tempoEntrega(tempo_entrega)
            .taxaFrete(taxa_frete)
            .telefone(telefone)
-           .imgPerfil(img_perfil)
            .categoria(categoria.getCategoria())
            .build();
    }

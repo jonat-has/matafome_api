@@ -61,6 +61,9 @@ public class EmpresaService {
 
         EntidadeAuditavelService.criarMetadadosEntidade(empresa, usuarioLogado);
 
+        empresa.setImgCapa("https://firebasestorage.googleapis.com/v0/b/upload-image-6a82d.appspot.com/o/imgCapa.jpg?alt=media&token=bc0efdd1-2bad-47a8-99cd-fcc8a7a73da7");
+        empresa.setImgPerfil("https://firebasestorage.googleapis.com/v0/b/upload-image-6a82d.appspot.com/o/imgPerfil.jpg?alt=media&token=11ecea76-a46e-4d3a-9fbc-dc97736d9cb0");
+
         Empresa empresaSalvo = repository.save(empresa);
 
         new Thread(() -> {
