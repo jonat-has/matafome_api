@@ -31,6 +31,7 @@ public class PedidoResponse {
     private StatusPagamentoEnum statusPagamento;
     private Float taxaEntrega;
     private Double valorTotal;
+    private String observacao;
 
     @Data
     @Builder

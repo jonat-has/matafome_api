@@ -50,7 +50,6 @@ public class Pedido extends EntidadeAuditavel {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Itens_pedido> itensPedido;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusPedidoEnum status;
@@ -67,4 +66,7 @@ public class Pedido extends EntidadeAuditavel {
 
     @Column(nullable = false)
     private Double valorTotal;
+
+    @Column
+    private String observacao;
 }

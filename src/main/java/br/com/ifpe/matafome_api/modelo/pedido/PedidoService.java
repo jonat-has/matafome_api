@@ -77,6 +77,7 @@ public class PedidoService {
                 .statusPagamento(StatusPagamentoEnum.PENDENTE)
                 .taxaEntrega(pedidoRequest.getTaxaEntrega())
                 .dataHoraPedido(LocalDateTime.now())
+                .observacao(pedidoRequest.getObservacao())
                 .build();
 
                 List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> Itens_pedido.builder()
@@ -135,6 +136,7 @@ public class PedidoService {
         pedido.setEnderecoEntrega(enderecoEntrega);
         pedido.setFormaPagamento(formaPagamento);
         pedido.setTaxaEntrega(pedidoRequest.getTaxaEntrega());
+        pedido.setObservacao(pedidoRequest.getObservacao());
 
         List<Itens_pedido> itensPedido = pedidoRequest.getItens().stream().map(item -> Itens_pedido.builder()
                 .produto(produtoRepository.findById(item.getProdutoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado")))
@@ -261,6 +263,7 @@ public class PedidoService {
             .statusPagamento(pedido.getStatusPagamento())
             .taxaEntrega(pedido.getTaxaEntrega())
             .valorTotal(pedido.getValorTotal())
+            .observacao(pedido.getObservacao())
             .build();
 }
 

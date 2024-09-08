@@ -25,6 +25,8 @@ public class PedidoRequest {
 
     private Float taxaEntrega;
 
+    private String observacao;
+
     @Getter
     @Setter
     @NoArgsConstructor
