@@ -7,9 +7,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import br.com.ifpe.matafome_api.api.pedido.HistoricoPedidosResponse;
+import br.com.ifpe.matafome_api.api.pedido.HistoricoProdutosResponse;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.pedido.model_querysql.*;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -322,7 +326,8 @@ public class PedidoService {
         List<PedidosPorDia> pedidosUltimos7Dias = pedidoRepository.findPedidosUltimos7Dias(empresaId, seteDiasAtras, hoje);
 
         //Últimos 5 clientes
-        List<UltimosClientes> ultimasVendas = pedidoRepository.findUltimasVendas(empresaId);
+        Pageable limit = PageRequest.of(0, 5);
+        List<UltimosClientes> ultimasVendas = pedidoRepository.findUltimasVendas(empresaId, limit);
 
         // Cria o response com os dados obtidos, tratando nulos com valores padrão
         return HistoricoPedidosResponse.builder()
@@ -332,6 +337,28 @@ public class PedidoService {
                 .pedidosHoje(pedidosHoje != null ? pedidosHoje : 0)
                 .pedidosUltimos7Dias(pedidosUltimos7Dias)
                 .ultimasVendas(ultimasVendas)
+                .build();
+    }
+
+    public HistoricoProdutosResponse getHistoricoProdutos(Long empresaId, LocalDate startDate, LocalDate endDate) {
+        Pageable limit = PageRequest.of(0, 5);
+        // Produto mais vendido
+        List<ProdutosMaisVendidos> produtosMaisVendidos = pedidoRepository.findProdutoMaisVendido(empresaId, startDate, endDate, limit);
+
+        // Produto mais lucrativo
+        List<ProdutosMaisLucrativos> produtoMaisLucrativo = pedidoRepository.findProdutoMaisLucrativo(empresaId, startDate, endDate, limit);
+
+        //Prateleira mais vendida
+        List<PrateleirasMaisVendidas> prateleirasMaisVendidas = pedidoRepository.findPrateleiraMaisVendida(empresaId, startDate, endDate, limit);
+
+        // Categoria mais lucrativa
+        List<PrateleirasMaisLucrativas> prateleirasMaisLucrativas = pedidoRepository.findPrateleirasMaisLucrativas(empresaId, startDate, endDate, limit);
+
+        return HistoricoProdutosResponse.builder()
+                .produtosMaisVendidos(produtosMaisVendidos)
+                .produtosMaisLucrativos(produtoMaisLucrativo)
+                .prateleirasMaisVendidas(prateleirasMaisVendidas)
+                .prateleirasMaisLucrativas(prateleirasMaisLucrativas)
                 .build();
     }
 }

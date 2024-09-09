@@ -134,4 +134,14 @@ public class PedidoController {
         HistoricoPedidosResponse historico = pedidoService.getHistoricoPedidos(empresaId, startDate, endDate);
         return ResponseEntity.ok(historico);
     }
+
+    @GetMapping("/historicoProdutos")
+    public ResponseEntity<HistoricoProdutosResponse> getHistoricoProdutos(
+            @RequestParam Long empresaId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        HistoricoProdutosResponse historico = pedidoService.getHistoricoProdutos(empresaId, startDate, endDate);
+        return ResponseEntity.ok(historico);
+    }
 }

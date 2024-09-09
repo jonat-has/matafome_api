@@ -1,4 +1,4 @@
-package br.com.ifpe.matafome_api.modelo.pedido;
+package br.com.ifpe.matafome_api.modelo.pedido.model_querysql;
 
 import lombok.*;
 

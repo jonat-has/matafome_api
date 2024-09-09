@@ -1,7 +1,7 @@
 package br.com.ifpe.matafome_api.api.pedido;
 
-import br.com.ifpe.matafome_api.modelo.pedido.PedidosPorDia;
-import br.com.ifpe.matafome_api.modelo.pedido.UltimosClientes;
+import br.com.ifpe.matafome_api.modelo.pedido.model_querysql.PedidosPorDia;
+import br.com.ifpe.matafome_api.modelo.pedido.model_querysql.UltimosClientes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
