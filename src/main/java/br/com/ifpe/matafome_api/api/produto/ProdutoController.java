@@ -52,8 +52,8 @@ public class ProdutoController {
             @ApiResponse(responseCode = "404", description = "Produto não encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> obterPorIDProdutos(@PathVariable Long id) {
-        Produto produto = produtoService.obterPorID(id);
+    public ResponseEntity<HashMap<String, Object>> obterPorIDProdutos(@PathVariable Long id) {
+        HashMap<String, Object> produto = produtoService.obterProdutoEmpresa(id);
         return ResponseEntity.ok(produto);
     }
 

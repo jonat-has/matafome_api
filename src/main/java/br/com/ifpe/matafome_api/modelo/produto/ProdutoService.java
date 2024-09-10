@@ -1,14 +1,11 @@
 package br.com.ifpe.matafome_api.modelo.produto;
 
 import java.beans.PropertyDescriptor;
-import java.time.LocalDate;
 import java.util.*;
 
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
-import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
-import br.com.ifpe.matafome_api.modelo.cliente.Forma_pagamento;
-import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
+import br.com.ifpe.matafome_api.modelo.empresa.EmpresaService;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -37,6 +34,8 @@ public class ProdutoService {
 
     @Autowired
     private AdicionaisRepository adicionaisRepository;
+    @Autowired
+    private EmpresaService empresaService;
 
 
     @Transactional
@@ -70,11 +69,26 @@ public class ProdutoService {
 
     public Produto obterPorID(Long id) {
         Optional<Produto> consulta = produtoRepository.findById(id);
+
         if (consulta.isPresent()) {
             return consulta.get();
         } else {
             throw new EntidadeNaoEncontradaException("produto", id);
         }
+    }
+
+    public HashMap<String, Object> obterProdutoEmpresa(Long id) {
+        Produto produto = this.obterPorID(id);
+        Long prateleiraId = produto.getPrateleira().getId();
+        Long empresaId = produto.getPrateleira().getEmpresa().getId();
+
+        HashMap<String, Object> produtoResult = new HashMap<>();
+
+        produtoResult.put("idEmpresa", empresaId);
+        produtoResult.put("idPrateleira", prateleiraId);
+        produtoResult.put("Produto", produto);
+
+        return produtoResult;
     }
 
     public Prateleira obterPorIDPrateleira(Long id) {

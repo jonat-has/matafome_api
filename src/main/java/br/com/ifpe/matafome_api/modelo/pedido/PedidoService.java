@@ -326,7 +326,7 @@ public class PedidoService {
         List<PedidosPorDia> pedidosUltimos7Dias = pedidoRepository.findPedidosUltimos7Dias(empresaId, seteDiasAtras, hoje);
 
         //Últimos 5 clientes
-        Pageable limit = PageRequest.of(0, 5);
+        Pageable limit = PageRequest.of(0, 10);
         List<UltimosClientes> ultimasVendas = pedidoRepository.findUltimasVendas(empresaId, limit);
 
         // Cria o response com os dados obtidos, tratando nulos com valores padrão

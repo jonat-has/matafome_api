@@ -2,6 +2,7 @@ package br.com.ifpe.matafome_api.api.prateleira;
 
 
 import br.com.ifpe.matafome_api.modelo.acesso.UsuarioService;
+import br.com.ifpe.matafome_api.modelo.prateleira.model_querysql.PrateleirasPromocionais;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.modelo.prateleira.PrateleiraService;
+
+import java.util.List;
 
 
 @RestController
@@ -97,6 +100,13 @@ public class PrateleiraController {
     public ResponseEntity<Void> deletarPrateleira(@PathVariable Long id, HttpServletRequest request) {
         prateleiraService.delete(id, usuarioService.obterUsuarioLogado(request));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/promocionais")
+    @Operation(summary = "Retorna prateleiras promocionais", description = "Retorna uma lista de prateleiras promocionais.")
+    public  ResponseEntity<List<PrateleirasPromocionais>> getPromo(@RequestParam Integer page) {
+        List<PrateleirasPromocionais> promocionais = prateleiraService.obeterPromo(page);
+        return ResponseEntity.ok(promocionais);
     }
 
 }

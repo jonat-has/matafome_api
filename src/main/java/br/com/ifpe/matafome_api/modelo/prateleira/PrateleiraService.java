@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.prateleira.model_querysql.PrateleirasPromocionais;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
@@ -21,6 +25,8 @@ public class PrateleiraService {
 
     @Autowired
     private EmpresaService empresaService;
+    @Autowired
+    private PrateleiraRepository prateleiraRepository;
 
     @Transactional
     public Prateleira save(Prateleira prateleira, Long empresaId,  Usuario usuarioLogado) {
@@ -68,6 +74,14 @@ public class PrateleiraService {
         EntidadeAuditavelService.desativarEntidade(prateleira, usuarioLogado);
 
         return repository.save(prateleira);
+    }
+
+    public List<PrateleirasPromocionais> obeterPromo(Integer pageNumber) {
+
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by("nomePrateleira").ascending());
+
+        return prateleiraRepository.findPrateleirasComNomesSemelhantes("promo", "oferta", "desconto", pageable);
+
     }
     
 }
