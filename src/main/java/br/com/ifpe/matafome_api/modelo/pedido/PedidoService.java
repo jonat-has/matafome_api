@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import br.com.ifpe.matafome_api.api.pedido.HistoricoPedidosResponse;
-import br.com.ifpe.matafome_api.api.pedido.HistoricoProdutosResponse;
+import br.com.ifpe.matafome_api.api.pedido.*;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.pedido.model_querysql.*;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
@@ -18,8 +17,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.ifpe.matafome_api.api.pedido.PedidoRequest;
-import br.com.ifpe.matafome_api.api.pedido.PedidoResponse;
 import br.com.ifpe.matafome_api.modelo.cliente.Cliente;
 import br.com.ifpe.matafome_api.modelo.cliente.ClienteRepository;
 import br.com.ifpe.matafome_api.modelo.cliente.Endereco_cliente;
@@ -361,4 +358,30 @@ public class PedidoService {
                 .prateleirasMaisLucrativas(prateleirasMaisLucrativas)
                 .build();
     }
+
+    public HistoricoClientesResponse getHistoricoClientes(Long empresaId, LocalDate startDate, LocalDate endDate) {
+
+        Long novosClientes = pedidoRepository.findNovosClientes(empresaId, startDate, endDate);
+
+        Long clientesAtivos = pedidoRepository.countClientesAtivos(empresaId, startDate, endDate);
+
+        Double taxaRentecao = (clientesAtivos * 100.0) / novosClientes;
+
+        Long cepsAtendidos = pedidoRepository.countDistinctCeps(empresaId, startDate, endDate);
+
+        Pageable limit = PageRequest.of(0, 5);
+        List<ClientesFrequentes> clientesFrequentes = pedidoRepository.findClientesMaisFrequentes(empresaId, startDate, endDate, limit);
+
+        List<BairrosFrequentes> bairrosFrequentes = pedidoRepository.findBairrosMaisFrequentes(empresaId, startDate, endDate, limit);
+
+        return  HistoricoClientesResponse.builder()
+                .novosClientes(novosClientes)
+                .clientesAtivos(clientesAtivos)
+                .taxaRentecao(taxaRentecao)
+                .cepsAtendidos(cepsAtendidos)
+                .clientesMaisFrequentes(clientesFrequentes)
+                .bairrosMaisFrequentes(bairrosFrequentes)
+                .build();
+    }
+
 }

@@ -55,7 +55,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping
-    public ResponseEntity<Pedido> criarPedido(@RequestBody PedidoRequest pedidoRequest,  HttpServletRequest request) {
+    public ResponseEntity<Pedido> criarPedido(@RequestBody PedidoRequest pedidoRequest, HttpServletRequest request) {
         Pedido pedido = pedidoService.save(pedidoRequest, usuarioService.obterUsuarioLogado(request));
         return ResponseEntity.ok(pedido);
     }
@@ -93,7 +93,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-     @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> obterPedidoPorId(@PathVariable Long id) {
         PedidoResponse pedido = pedidoService.findById(id);
         return ResponseEntity.ok(pedido);
@@ -144,4 +144,15 @@ public class PedidoController {
         HistoricoProdutosResponse historico = pedidoService.getHistoricoProdutos(empresaId, startDate, endDate);
         return ResponseEntity.ok(historico);
     }
+
+    @GetMapping("/historicoClientes")
+    public ResponseEntity<HistoricoClientesResponse> getHistoricoClientes(
+            @RequestParam Long empresaId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        HistoricoClientesResponse historico = pedidoService.getHistoricoClientes(empresaId, startDate, endDate);
+        return ResponseEntity.ok(historico);
+    }
+
 }
