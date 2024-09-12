@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ClientesFrequentes {
 
+    private Long id;
     private String nome;
     private String bairro;
     private Long totalPedidos;

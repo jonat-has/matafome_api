@@ -116,7 +116,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT COUNT(DISTINCT p.enderecoEntrega.cep) FROM Pedido p WHERE p.empresa.id = :idEmpresa AND p.dataCriacao BETWEEN :startDate AND :endDate")
     Long countDistinctCeps(@Param("idEmpresa") Long idEmpresa, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT new br.com.ifpe.matafome_api.modelo.pedido.model_querysql.ClientesFrequentes( p.cliente.nome, p.enderecoEntrega.bairro, COUNT(p), SUM(p.valorTotal)) " +
+    @Query("SELECT new br.com.ifpe.matafome_api.modelo.pedido.model_querysql.ClientesFrequentes(p.cliente.id, p.cliente.nome, p.enderecoEntrega.bairro, COUNT(p), SUM(p.valorTotal)) " +
             "FROM Pedido p WHERE p.empresa.id = :idEmpresa AND p.dataCriacao BETWEEN :startDate AND :endDate " +
             "GROUP BY p.cliente.id, p.cliente.nome, p.enderecoEntrega.bairro ORDER BY COUNT(p) DESC")
     List<ClientesFrequentes> findClientesMaisFrequentes(@Param("idEmpresa") Long idEmpresa, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);

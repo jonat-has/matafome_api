@@ -365,7 +365,7 @@ public class PedidoService {
 
         Long clientesAtivos = pedidoRepository.countClientesAtivos(empresaId, startDate, endDate);
 
-        Double taxaRentecao = (clientesAtivos * 100.0) / novosClientes;
+        Double taxaRentecao = (clientesAtivos * 100.0) / (clientesAtivos + novosClientes);
 
         Long cepsAtendidos = pedidoRepository.countDistinctCeps(empresaId, startDate, endDate);
 
