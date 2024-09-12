@@ -3,6 +3,11 @@ package br.com.ifpe.matafome_api.api.acesso;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +51,13 @@ public class AuthenticationController {
         this.usuarioService = usuarioService;
     }
 
+    @Operation(summary = "Login de usuário", description = "Autentica o usuário e retorna um token JWT e dados relacionados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login bem-sucedido",
+                    content = @Content(schema = @Schema(implementation = Map.class))),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @PostMapping
     public Map<Object, Object> signin(@RequestBody AuthenticationRequest data) {
     
@@ -73,8 +85,14 @@ public class AuthenticationController {
          
 
         return loginResponse;
-    }  
+    }
 
+    @Operation(summary = "Validar e-mail de usuário", description = "Valida o e-mail de um usuário com base em seu ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "E-mail validado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Falha ao validar o e-mail"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @GetMapping("/validar/{idUser}")
     public ResponseEntity<String> validarEmail(@PathVariable Long idUser) {
         boolean isEmailValidated = usuarioService.validarEmail(idUser);
@@ -85,7 +103,13 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao validar o email.");
         }
     }
-    
+
+    @Operation(summary = "Enviar código de recuperação de senha", description = "Envia um código de recuperação de senha para o e-mail fornecido")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Código enviado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao enviar o código"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @PostMapping("/enviarCodigoDeRecuperacao")
     public ResponseEntity<String> enviarCodigoDeRecuperacao(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -98,17 +122,27 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/validarCodigoDeRecuperação")
+    @Operation(summary = "Validar código de recuperação de senha", description = "Valida o código de recuperação enviado para o e-mail do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Código validado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Código inválido"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping("/validarCodigoDeRecuperacao")
     public Boolean validarCodigo(@RequestBody TrocarSenhaRequest request ) {
         String email = request.getEmail();
         Integer codigo = request.getCodigo();
-        
-        Boolean valido = usuarioService.validarCodigo(codigo,email);
 
-        return valido;
+        return usuarioService.validarCodigo(codigo,email);
     }
-    
 
+
+    @Operation(summary = "Trocar senha de usuário", description = "Troca a senha de um usuário com base no e-mail")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Senha trocada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao trocar a senha"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @PostMapping("/trocarSenha")
     public ResponseEntity<String> trocarSenha(@RequestBody Map<String, String> request) {
         String email = request.get("email");

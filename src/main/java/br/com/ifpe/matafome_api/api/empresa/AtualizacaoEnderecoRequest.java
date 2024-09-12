@@ -28,4 +28,17 @@ public class AtualizacaoEnderecoRequest {
     private String estado;
 
     private String complemento;
+
+    public AtualizacaoEnderecoRequest build() {
+
+        return  AtualizacaoEnderecoRequest.builder()
+                .cep(cep)
+                .logradouro(logradouro)
+                .numero(numero)
+                .bairro(bairro)
+                .cidade(cidade)
+                .estado(estado)
+                .complemento(complemento)
+                .build();
+    }
 }

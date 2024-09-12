@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
@@ -47,12 +48,15 @@ public class ClienteRequest {
     @Size(min = 8, message = "A Senha deve ter pelo menos 8 caracteres")
     private String password;
    
+    private String imgCliente;
+
+    private LocalDate dataNascimento;
 
     public Usuario buildUsuario() {
        return Usuario.builder()
            .username(email)
            .password(password)
-           .roles(Arrays.asList(Usuario.ROLE_CLIENTE))
+           .roles(List.of(Usuario.ROLE_CLIENTE))
            .build();
    }
 
@@ -64,6 +68,8 @@ public class ClienteRequest {
                 .nome(nome)
                 .foneCelular(foneCelular)
                 .cpf(cpf)
+                .dataNascimento(dataNascimento)
+                .imgCliente(imgCliente)
                 .build();
     }
 

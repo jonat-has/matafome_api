@@ -61,7 +61,7 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) throws MessagingException {
         Cliente cliente = clienteService.save(clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
-        return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
+        return new ResponseEntity<>(cliente, HttpStatus.CREATED);
     }
 
 
@@ -81,7 +81,6 @@ public class ClienteController {
 
 
 
-    
     @Operation(
         summary = "Obter um cliente por ID.",
         description = "Endpoint para recuperar os detalhes de um cliente específico pelo seu ID.",
@@ -110,10 +109,10 @@ public class ClienteController {
         }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody AtualizacaoClienteRequest atualizacaoClienteRequest, HttpServletRequest request) {
 
-	    Cliente clienteAtt = clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
-	    return new ResponseEntity<Cliente>(clienteAtt, HttpStatus.OK);
+	    Cliente clienteAtt = clienteService.update(id, atualizacaoClienteRequest.build(), usuarioService.obterUsuarioLogado(request));
+	    return new ResponseEntity<>(clienteAtt, HttpStatus.OK);
     }
 
 
@@ -129,9 +128,9 @@ public class ClienteController {
         }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id,HttpServletRequest request) {
 
-       clienteService.delete(id);
+       clienteService.delete(id, usuarioService.obterUsuarioLogado(request));
        return ResponseEntity.ok().build();
    }
 
@@ -168,9 +167,9 @@ public class ClienteController {
         }
     )
    @PostMapping("/{clienteId}/enderecos")
-   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable Long clienteId, @RequestBody @Valid Endereco_clienteRequest request) {
-       Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, request.build());
-       return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.CREATED);
+   public ResponseEntity<Endereco_cliente> adicionarEndereco_cliente(@PathVariable Long clienteId, @RequestBody @Valid Endereco_clienteRequest enderecoClienteRequest, HttpServletRequest request) {
+       Endereco_cliente endereco = clienteService.adicionarEndereco_cliente(clienteId, enderecoClienteRequest.build(), usuarioService.obterUsuarioLogado(request));
+       return new ResponseEntity<>(endereco, HttpStatus.CREATED);
    }
 
 
@@ -187,10 +186,10 @@ public class ClienteController {
         }
     )
    @PatchMapping("/{clienteId}/enderecos/{enderecoId}")
-   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable Long enderecoId, @RequestBody Endereco_clienteRequest request) {
+   public ResponseEntity<Endereco_cliente> atualizarEndereco_cliente(@PathVariable Long enderecoId, @RequestBody Endereco_clienteRequest enderecoClienteRequest, HttpServletRequest request) {
 
-       Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, request.build());
-       return new ResponseEntity<Endereco_cliente>(endereco, HttpStatus.OK);
+       Endereco_cliente endereco = clienteService.atualizarEndereco_cliente(enderecoId, enderecoClienteRequest.build(), usuarioService.obterUsuarioLogado(request) );
+       return new ResponseEntity<>(endereco, HttpStatus.OK);
    }
 
 
@@ -205,9 +204,9 @@ public class ClienteController {
         }
     )
    @DeleteMapping("/enderecos/{enderecoId}")
-   public ResponseEntity<Void> removerEndereco_cliente(@PathVariable Long enderecoId) {
+   public ResponseEntity<Void> removerEndereco_cliente(@PathVariable Long enderecoId,  HttpServletRequest request) {
 
-       clienteService.removerEndereco_cliente(enderecoId);
+       clienteService.removerEndereco_cliente(enderecoId, usuarioService.obterUsuarioLogado(request));
        return ResponseEntity.noContent().build();
    }
 
@@ -245,10 +244,10 @@ public class ClienteController {
         }
     )
    @PostMapping("/{clienteId}/formasDePagamentos")
-   public ResponseEntity<Forma_pagamento> adicionarFormaPagamento(@PathVariable Long clienteId, @RequestBody @Valid Forma_pagamentoRequest request) {
+   public ResponseEntity<Forma_pagamento> adicionarFormaPagamento(@PathVariable Long clienteId, @RequestBody @Valid Forma_pagamentoRequest formaPagamentoRequest,  HttpServletRequest request) {
 
-    Forma_pagamento formasDePagamento = clienteService.adicionarForma_pagamento(clienteId, request.build());
-       return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.CREATED);
+    Forma_pagamento formasDePagamento = clienteService.adicionarForma_pagamento(clienteId, formaPagamentoRequest.build(), usuarioService.obterUsuarioLogado(request));
+       return new ResponseEntity<>(formasDePagamento, HttpStatus.CREATED);
    }
 
 
@@ -265,10 +264,10 @@ public class ClienteController {
         }
     )
    @PatchMapping("/{clientesId}/formasDePagamentos/{formaId}")
-   public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable Long formaId, @RequestBody Forma_pagamentoRequest request) {
+   public ResponseEntity<Forma_pagamento> atualizarFormaPagamento(@PathVariable Long formaId, @RequestBody Forma_pagamentoRequest formaPagamentoRequest, HttpServletRequest request) {
 
-    Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, request.build());
-       return new ResponseEntity<Forma_pagamento>(formasDePagamento, HttpStatus.OK);
+    Forma_pagamento formasDePagamento = clienteService.atualizarForma_pagamento(formaId, formaPagamentoRequest.build(), usuarioService.obterUsuarioLogado(request));
+       return new ResponseEntity<>(formasDePagamento, HttpStatus.OK);
    }
 
 
@@ -285,9 +284,9 @@ public class ClienteController {
         }
     )
    @DeleteMapping("/{clientesId}/formasDePagamentos/{formaId}")
-   public ResponseEntity<Void> removerFormaPagamento(@PathVariable Long formaId) {
+   public ResponseEntity<Void> removerFormaPagamento(@PathVariable Long formaId,  HttpServletRequest request) {
 
-       clienteService.removerForma_pagamento(formaId);
+       clienteService.removerForma_pagamento(formaId, usuarioService.obterUsuarioLogado(request));
        return ResponseEntity.noContent().build();
    }
 
@@ -307,7 +306,5 @@ public class ClienteController {
    public List<PedidoResponse> pedidosDoCliente(@PathVariable Long idCliente) {
        return pedidoService.findPedidosByClienteId(idCliente);
    }
-   
-
 
 }

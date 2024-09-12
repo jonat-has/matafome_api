@@ -1,7 +1,9 @@
 package br.com.ifpe.matafome_api.modelo.cliente;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -12,13 +14,6 @@ import org.hibernate.annotations.FetchMode;
 import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,11 +38,17 @@ public class Cliente extends EntidadeAuditavel {
     @Column(nullable = false, length = 100)
     private String nome;
 
-    @Column(length = 14)
+    @Column(length = 15)
     private String foneCelular;
 
     @Column(unique = true)
     private String cpf;
+
+    @Column
+    private String imgCliente;
+
+    @Column
+    private LocalDate dataNascimento;
 
     @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)

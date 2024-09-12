@@ -17,10 +17,11 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
 
     Page<Empresa> findByNomeFantasiaContainingIgnoreCase(String nomeFantasia, Pageable pageable);
 
-    Page<Empresa> findByCategoriaIgnoreCase(String categoria, Pageable pageable);
+    Page<Empresa> findByCategoriaContainingIgnoreCase(String categoria, Pageable pageable);
 
     Page<Empresa> findByNomeFantasiaContainingIgnoreCaseAndCategoriaIgnoreCase(
             String nomeFantasia, String categoria, Pageable pageable);
-  
+
+
 }
 

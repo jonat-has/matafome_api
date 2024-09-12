@@ -7,19 +7,12 @@ import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
 import br.com.ifpe.matafome_api.modelo.pedido.Pedido;
 import br.com.ifpe.matafome_api.modelo.prateleira.Prateleira;
 import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavel;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -57,7 +50,7 @@ public class Empresa extends EntidadeAuditavel  {
       @Column(name = "horario_abertura", nullable = false)
       private LocalTime horarioAbertura;
   
-      @Column(name = "img_capa", length = 255)
+      @Column(name = "img_capa")
       private String imgCapa;
   
       @Column(name = "horario_fechamento", nullable = false)
@@ -72,10 +65,10 @@ public class Empresa extends EntidadeAuditavel  {
       @Column(length = 15)
       private String telefone;
   
-      @Column(name = "img_perfil", length = 255)
+      @Column(name = "img_perfil")
       private String imgPerfil;
   
-      @Column(nullable = false, length = 50)
+      @Column(nullable = false)
       private String categoria;
   
       @OneToOne

@@ -1,10 +1,15 @@
 package br.com.ifpe.matafome_api.modelo.prateleira;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.ifpe.matafome_api.modelo.acesso.Usuario;
+import br.com.ifpe.matafome_api.modelo.prateleira.model_querysql.PrateleirasPromocionais;
+import br.com.ifpe.matafome_api.util.entity.EntidadeAuditavelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.ifpe.matafome_api.modelo.empresa.Empresa;
@@ -20,21 +25,19 @@ public class PrateleiraService {
 
     @Autowired
     private EmpresaService empresaService;
+    @Autowired
+    private PrateleiraRepository prateleiraRepository;
 
     @Transactional
-    public Prateleira save(Prateleira prateleira, Long empresaId) {
+    public Prateleira save(Prateleira prateleira, Long empresaId,  Usuario usuarioLogado) {
 
-        prateleira.setHabilitado(Boolean.TRUE);
-        prateleira.setVersao(1L);
-        prateleira.setDataCriacao(LocalDate.now());
-           // Obter a empresa pelo ID
+        EntidadeAuditavelService.criarMetadadosEntidade(prateleira, usuarioLogado);
+
         Empresa empresa = empresaService.obterPorID(empresaId);
 
-        // Associar a prateleira à empresa
         prateleira.setEmpresa(empresa);
 
         return repository.save(prateleira);
-
     }
 
     public List<Prateleira> listarTodos() {
@@ -54,19 +57,31 @@ public class PrateleiraService {
     }
 
     @Transactional
-    public void update(Long id, Prateleira prateleiraAlterada) {
-        Prateleira prateleira = repository.findById(id).get();
+    public Prateleira update(Long id, Prateleira prateleiraAlterada, Usuario usuarioLogado) {
+        Prateleira prateleira = this.obterPorID(id);
+
         prateleira.setNomePrateleira(prateleiraAlterada.getNomePrateleira());
-        prateleira.setVersao(prateleira.getVersao() + 1);
-        repository.save(prateleira);
+
+        EntidadeAuditavelService.atualizarMetadadosEntidade(prateleira, usuarioLogado);
+
+        return repository.save(prateleira);
     }
 
     @Transactional
-    public void delete(Long id) {
-        Prateleira prateleira = repository.findById(id).get();
-        prateleira.setHabilitado(Boolean.FALSE);
-        prateleira.setVersao(prateleira.getVersao() + 1);
-        repository.save(prateleira);
+    public Prateleira delete(Long id, Usuario usuarioLogado) {
+        Prateleira prateleira = this.obterPorID(id);
+
+        EntidadeAuditavelService.desativarEntidade(prateleira, usuarioLogado);
+
+        return repository.save(prateleira);
+    }
+
+    public List<PrateleirasPromocionais> obeterPromo(Integer pageNumber) {
+
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by("nomePrateleira").ascending());
+
+        return prateleiraRepository.findPrateleirasComNomesSemelhantes("promo", "oferta", "desconto", pageable);
+
     }
     
 }
